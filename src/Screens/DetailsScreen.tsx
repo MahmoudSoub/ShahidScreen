@@ -1,8 +1,9 @@
-import React, {useCallback} from 'react';
+import React, {useCallback, useState} from 'react';
 import {
   Dimensions,
   FlatList,
   Image,
+  Pressable,
   StyleSheet,
   Text,
   View,
@@ -13,7 +14,17 @@ import {gridImages} from '../assets/mock-data';
 import type {gridImagesType} from '../assets/mock-data';
 
 const DetailsScreen = ({navigation}: any) => {
+  const [toggleCol, setToggleCol] = useState(false);
+
+  const numOfCol = toggleCol ? 3 : 2;
   const {height, width} = useWindowDimensions();
+  const MarginHorizontal = 2;
+  const PaddingHorizontal = 10;
+  const totalToSubtract = MarginHorizontal * 6 + PaddingHorizontal * 2;
+
+  const imageWidth = (width - totalToSubtract) / numOfCol;
+  console.log(imageWidth);
+  console.log(toggleCol);
 
   const handleBackPress = () => {
     navigation.goBack();
@@ -31,33 +42,44 @@ const DetailsScreen = ({navigation}: any) => {
           sequi, aut repudiandae porro dignissimos voluptatum alias accusamus
           incidunt.
         </Text>
+
         <Text style={styles.showInfo}>Show Info</Text>
+        <Pressable
+          style={{position: 'absolute', right: 10, bottom: 0}}
+          onPress={() => setToggleCol(!toggleCol)}>
+          <Text style={{color: 'white'}}>SWITCH</Text>
+        </Pressable>
       </View>
     );
   };
 
-  const handleRenderItem = useCallback(({item}: {item: gridImagesType}) => {
-    return (
-      <View
-        style={{
-          marginBottom: width * 0.01,
-          marginHorizontal: width * 0.005,
-          // paddingTop: ,
-        }}>
-        <Image source={item.imageSource} style={[styles.gridImage]} />
-        <View style={styles.playContainer}>
+  const handleRenderItem = useCallback(
+    ({item}: {item: gridImagesType}) => {
+      return (
+        <View
+          style={{
+            marginBottom: 4,
+            marginHorizontal: MarginHorizontal,
+          }}>
           <Image
-            source={item.iconSource}
-            tintColor={'white'}
-            style={styles.playIcon}
+            source={item.imageSource}
+            style={[styles.gridImage, {width: imageWidth}]}
           />
-          <Text style={{color: 'white', fontSize: 12, fontWeight: '700'}}>
-            {item.viewCount}
-          </Text>
+          <View style={styles.playContainer}>
+            <Image
+              source={item.iconSource}
+              tintColor={'white'}
+              style={styles.playIcon}
+            />
+            <Text style={{color: 'white', fontSize: 12, fontWeight: '700'}}>
+              {item.viewCount}
+            </Text>
+          </View>
         </View>
-      </View>
-    );
-  }, []);
+      );
+    },
+    [toggleCol],
+  );
 
   return (
     <View style={styles.container}>
@@ -65,14 +87,18 @@ const DetailsScreen = ({navigation}: any) => {
       <FlatList
         bounces={false}
         contentContainerStyle={{
-          paddingBottom: 20,
-          alignItems: 'center',
+          // width: '100%',
+          // alignItems: 'center',
+          // alignSelf: 'center',
           // gap: width / 40,
+          paddingBottom: 20,
+          paddingHorizontal: PaddingHorizontal,
           backgroundColor: '#181d25',
         }}
         showsVerticalScrollIndicator={false}
         ListHeaderComponent={renderListHeader}
-        numColumns={3}
+        numColumns={numOfCol}
+        key={numOfCol}
         data={gridImages}
         renderItem={handleRenderItem}
         keyExtractor={item => item.id}
@@ -116,7 +142,7 @@ const styles = StyleSheet.create({
   gridImage: {
     resizeMode: 'cover',
     height: 200,
-    width: 115,
+    // width: 90,
     borderRadius: 5,
     // marginHorizontal: 3,
     // marginBottom: 4,
