@@ -1,10 +1,20 @@
 import React, {useCallback} from 'react';
-import {FlatList, Image, StyleSheet, Text, View} from 'react-native';
+import {
+  Dimensions,
+  FlatList,
+  Image,
+  StyleSheet,
+  Text,
+  View,
+  useWindowDimensions,
+} from 'react-native';
 import DetailsHeader from '../components/DetailsHeader';
 import {gridImages} from '../assets/mock-data';
 import type {gridImagesType} from '../assets/mock-data';
 
 const DetailsScreen = ({navigation}: any) => {
+  const {height, width} = useWindowDimensions();
+
   const handleBackPress = () => {
     navigation.goBack();
   };
@@ -28,8 +38,13 @@ const DetailsScreen = ({navigation}: any) => {
 
   const handleRenderItem = useCallback(({item}: {item: gridImagesType}) => {
     return (
-      <View>
-        <Image source={item.imageSource} style={styles.gridImage} />
+      <View
+        style={{
+          marginBottom: width * 0.01,
+          marginHorizontal: width * 0.005,
+          // paddingTop: ,
+        }}>
+        <Image source={item.imageSource} style={[styles.gridImage]} />
         <View style={styles.playContainer}>
           <Image
             source={item.iconSource}
@@ -48,11 +63,11 @@ const DetailsScreen = ({navigation}: any) => {
     <View style={styles.container}>
       <DetailsHeader handleBackPress={handleBackPress} />
       <FlatList
-        // style={{backgroundColor: '#181d25'}}
+        bounces={false}
         contentContainerStyle={{
-          paddingBottom: 18,
+          paddingBottom: 20,
           alignItems: 'center',
-          gap: 6,
+          // gap: width / 40,
           backgroundColor: '#181d25',
         }}
         showsVerticalScrollIndicator={false}
@@ -79,7 +94,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#20252D',
     justifyContent: 'center',
     alignItems: 'center',
-    marginBottom: 5,
+    marginBottom: 12,
   },
   logoImage: {
     resizeMode: 'contain',
@@ -99,11 +114,11 @@ const styles = StyleSheet.create({
   },
 
   gridImage: {
-    resizeMode: 'contain',
-    height: 191,
-    width: 100,
+    resizeMode: 'cover',
+    height: 200,
+    width: 115,
     borderRadius: 5,
-    marginHorizontal: 3,
+    // marginHorizontal: 3,
     // marginBottom: 4,
   },
   playContainer: {
