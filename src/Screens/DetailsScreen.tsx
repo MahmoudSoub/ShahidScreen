@@ -12,6 +12,7 @@ import {
 import DetailsHeader from '../components/DetailsHeader';
 import {gridImages} from '../assets/mock-data';
 import type {gridImagesType} from '../assets/mock-data';
+import {formatNumber} from '../util/NumberFormatter';
 
 const DetailsScreen = ({navigation}: any) => {
   const [toggleCol, setToggleCol] = useState(false);
@@ -20,11 +21,7 @@ const DetailsScreen = ({navigation}: any) => {
   const {height, width} = useWindowDimensions();
   const MarginHorizontal = 2;
   const PaddingHorizontal = 10;
-  const totalToSubtract = MarginHorizontal * 6 + PaddingHorizontal * 2;
-
-  const imageWidth = (width - totalToSubtract) / numOfCol;
-  console.log(imageWidth);
-  console.log(toggleCol);
+  const horizontalToSubtract = MarginHorizontal * 6 + PaddingHorizontal * 2;
 
   const handleBackPress = () => {
     navigation.goBack();
@@ -55,6 +52,8 @@ const DetailsScreen = ({navigation}: any) => {
 
   const handleRenderItem = useCallback(
     ({item}: {item: gridImagesType}) => {
+      const imageWidth = (width - horizontalToSubtract) / numOfCol;
+      const formattedViews = formatNumber(item.viewCount);
       return (
         <View
           style={{
@@ -72,7 +71,7 @@ const DetailsScreen = ({navigation}: any) => {
               style={styles.playIcon}
             />
             <Text style={{color: 'white', fontSize: 12, fontWeight: '700'}}>
-              {item.viewCount}
+              {formattedViews}
             </Text>
           </View>
         </View>
@@ -87,12 +86,8 @@ const DetailsScreen = ({navigation}: any) => {
       <FlatList
         bounces={false}
         contentContainerStyle={{
-          // width: '100%',
-          // alignItems: 'center',
-          // alignSelf: 'center',
-          // gap: width / 40,
+          alignItems: 'center',
           paddingBottom: 20,
-          paddingHorizontal: PaddingHorizontal,
           backgroundColor: '#181d25',
         }}
         showsVerticalScrollIndicator={false}
@@ -120,7 +115,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#20252D',
     justifyContent: 'center',
     alignItems: 'center',
-    marginBottom: 12,
+    marginBottom: 16,
   },
   logoImage: {
     resizeMode: 'contain',
@@ -142,10 +137,7 @@ const styles = StyleSheet.create({
   gridImage: {
     resizeMode: 'cover',
     height: 200,
-    // width: 90,
     borderRadius: 5,
-    // marginHorizontal: 3,
-    // marginBottom: 4,
   },
   playContainer: {
     position: 'absolute',
