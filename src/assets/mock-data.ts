@@ -22,7 +22,7 @@ export const gridImages: gridImagesType[] = [
     id: '3',
     imageSource: require('../assets/gridImage.jpg'),
     iconSource: require('../assets/playIcon.png'),
-    viewCount: 1100,
+    viewCount: 1100000000,
   },
   {
     id: '4',
