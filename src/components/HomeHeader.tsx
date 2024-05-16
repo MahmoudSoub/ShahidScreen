@@ -1,4 +1,4 @@
-import {Image, StyleSheet, Text, View} from 'react-native';
+import {Image, StyleSheet, View} from 'react-native';
 
 function HomeHeader() {
   return (
@@ -34,8 +34,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   imageIcon: {
-    height: 25,
-    width: 25,
+    height: 30,
+    width: 30,
   },
   arrowIcon: {
     // marginLeft: 11,
