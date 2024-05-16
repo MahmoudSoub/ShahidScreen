@@ -1,111 +1,26 @@
 import React, {useState} from 'react';
-import {
-  FlatList,
-  Image,
-  ImageBackground,
-  Pressable,
-  ScrollView,
-  StyleSheet,
-  Text,
-  View,
-  useWindowDimensions,
-} from 'react-native';
-import IconButton from './IconButton';
-import LinearGradient from 'react-native-linear-gradient';
+import {FlatList, StyleSheet, View} from 'react-native';
 import HomeHeader from './HomeHeader';
-import {useNavigation} from '@react-navigation/native';
-import createImageInfo from '../assets/home-mock-data';
-import {posts} from '../assets/posts-mock-data';
+import {PostType, posts} from '../assets/posts-mock-data';
+import Post from './Post';
 
 function Feed() {
-  const [isShowMore, setIsShowMore] = useState(false);
-  const {id, backgroundSource, title, logoSource} = posts[0];
-  const descriptionText =
-    'Lorem, ipsum dolor sit amet consectetur adipisicing elit. Ut temporibus veritatis reprehenderit quo, amet facere. Quae in cupiditate quos? Doloremque facere delectus atque nostrum molestias sequi similique Lorem, ipsum dolor sit amet consectetur adipisicing elit. Ut temporibus veritatis reprehenderit quo, amet facere. Quae in cupiditate quos? Doloremque facere delectus atque nostrum molestias sequi similique Lorem, ipsum dolor sit amet consectetur adipisicing elit. Ut temporibus veritatis reprehenderit quo, amet facere. Quae in cupiditate quos? Doloremque facere delectus atque nostrum molestias sequi similique Lorem, ipsum dolor sit amet consectetur adipisicing elit. Ut temporibus veritatis reprehenderit quo, amet facere. Quae in cupiditate quos? Doloremque facere delectus atque nostrum molestias sequi similique animi! Exercitationem, provident?... ';
+  const renderListItem = ({item}: {item: PostType}) => {
+    return <Post item={item} />;
+  };
 
-  const toggleShowMore = () => {
-    setIsShowMore(!isShowMore);
-  };
-  const onContainerPress = () => {
-    if (isShowMore) {
-      toggleShowMore();
-    }
-  };
-  const {height, width} = useWindowDimensions();
-  const navigation: any = useNavigation();
-  const ImageInfo = createImageInfo(navigation);
   return (
     <>
       <View style={styles.outerContainer}>
         <View style={styles.innerContainer}>
           <>
-            <LinearGradient
-              colors={['transparent', 'rgba(0, 0, 0, 0.8)']}
-              style={{
-                position: 'absolute',
-                bottom: 0,
-                left: 0,
-                zIndex: 1,
-                height: 260,
-                width: '100%',
-              }}
-            />
             <HomeHeader />
             <FlatList
-              // contentContainerStyle={{backgroundColor: 'red'}}
+              showsVerticalScrollIndicator={false}
               pagingEnabled
               keyExtractor={({id}) => id.toString()}
               data={posts}
-              renderItem={({item}) => (
-                <Pressable onPress={onContainerPress} style={{height}}>
-                  <ImageBackground
-                    source={item.backgroundSource}
-                    style={styles.imageBackground}
-                    resizeMode="cover">
-                    <View style={styles.heroContainer}>
-                      <View style={styles.imageAndText}>
-                        <Image
-                          source={item.logoSource}
-                          style={styles.logoImage}
-                        />
-                        <View style={styles.titleContainer}>
-                          <Text style={styles.title}>{title}</Text>
-                        </View>
-                        <View style={styles.descriptionContainer}>
-                          <ScrollView>
-                            <Pressable onPress={toggleShowMore}>
-                              <Text style={styles.description}>
-                                {isShowMore
-                                  ? descriptionText
-                                  : `${descriptionText.slice(0, 120)}...`}
-                                <Text style={styles.showText}>
-                                  {isShowMore ? 'Show Less' : ' Show More'}
-                                </Text>
-                              </Text>
-                            </Pressable>
-                          </ScrollView>
-                        </View>
-                      </View>
-                      <View style={styles.icons}>
-                        {ImageInfo.map(({id, source, text, onPress}) => (
-                          <View key={id} style={{}}>
-                            <IconButton onPress={onPress}>
-                              <Image
-                                source={source}
-                                tintColor={'white'}
-                                style={styles.imageIcon}
-                              />
-                            </IconButton>
-                            {text ? (
-                              <Text style={styles.text}>{text}</Text>
-                            ) : null}
-                          </View>
-                        ))}
-                      </View>
-                    </View>
-                  </ImageBackground>
-                </Pressable>
-              )}
+              renderItem={renderListItem}
             />
           </>
         </View>
@@ -130,7 +45,7 @@ const styles = StyleSheet.create({
     // flex: 1,
   },
   imageBackground: {
-    zIndex: 1,
+    zIndex: -99,
     flex: 1,
     height: '100%',
     width: '100%',
@@ -140,7 +55,7 @@ const styles = StyleSheet.create({
     height: 60,
   },
   heroContainer: {
-    zIndex: 1,
+    zIndex: 999,
     width: '100%',
     paddingBottom: 40,
     paddingHorizontal: 10,
@@ -166,7 +81,7 @@ const styles = StyleSheet.create({
   },
   descriptionContainer: {
     maxWidth: 300,
-    maxHeight: 80,
+    maxHeight: 550,
   },
   description: {
     color: '#f0f0f0',
