@@ -27,17 +27,11 @@ export default HomeHeader;
 
 const styles = StyleSheet.create({
   container: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    zIndex: 4,
-    height: 64,
-    width: '100%',
     flexDirection: 'row',
+    width: '90%',
     paddingTop: 50,
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingHorizontal: 10,
   },
   imageIcon: {
     height: 30,

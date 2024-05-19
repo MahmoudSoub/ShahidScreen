@@ -1,9 +1,7 @@
-import {ImageSourcePropType} from 'react-native';
-
 export interface gridImagesType {
   id: string;
-  imageSource: ImageSourcePropType;
-  iconSource: ImageSourcePropType;
+  imageSource: any;
+  iconSource: any;
   viewCount: number;
 }
 
