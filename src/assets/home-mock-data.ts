@@ -10,6 +10,8 @@ export interface ImageInfoItem {
 
 const createImageInfo = (
   navigation: NavigationProp<any, any>,
+  isLiked: boolean,
+  setIsLiked: React.Dispatch<React.SetStateAction<boolean>>,
 ): ImageInfoItem[] => [
   {
     id: 1,
@@ -23,7 +25,9 @@ const createImageInfo = (
     id: 2,
     source: require('../assets/like.png'),
     text: '153',
-    onPress: () => {},
+    onPress: () => {
+      setIsLiked(!isLiked);
+    },
   },
   {
     id: 3,

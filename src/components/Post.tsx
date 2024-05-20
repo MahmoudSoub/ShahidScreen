@@ -1,6 +1,7 @@
 import {
   Image,
   ImageBackground,
+  LayoutChangeEvent,
   Pressable,
   ScrollView,
   StyleSheet,
@@ -8,21 +9,66 @@ import {
   View,
   useWindowDimensions,
 } from 'react-native';
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import LinearGradient from 'react-native-linear-gradient';
 import IconButton from './IconButton';
 import {useNavigation} from '@react-navigation/native';
 import createImageInfo from '../assets/home-mock-data';
 import type {PostType} from '../assets/posts-mock-data';
+import Animated, {
+  Easing,
+  useAnimatedStyle,
+  useSharedValue,
+  withTiming,
+} from 'react-native-reanimated';
 
 interface PostProps {
   item: PostType;
 }
 
 export default function Post({item}: PostProps) {
+  const {height} = useWindowDimensions();
+  const maxHeroHeight = height - (64 + 60 + 40 + 60 + 10); // right under the header
+  const [isLiked, setIsLiked] = useState(false);
   const [isShowMore, setIsShowMore] = useState(false);
+  const [contentHeight, setContentHeight] = useState(0);
+
   const toggleShowMore = () => {
     setIsShowMore(!isShowMore);
+  };
+
+  const textHeight = item.description ? 42 : 0;
+  const animatedHeight = useSharedValue(textHeight);
+  const animatedOpacity = useSharedValue(0);
+
+  const animatedStyle = useAnimatedStyle(() => {
+    const height = isShowMore
+      ? Math.min(contentHeight, maxHeroHeight)
+      : textHeight;
+    return {
+      height: withTiming(height, {
+        duration: 300,
+        easing: Easing.inOut(Easing.ease),
+      }),
+    };
+  });
+
+  const handleAnimation = () => {
+    animatedOpacity.value = withTiming(isShowMore ? 0.8 : 0, {
+      duration: 300,
+      easing: Easing.inOut(Easing.ease),
+    });
+  };
+
+  useEffect(() => {
+    animatedHeight.value = isShowMore
+      ? Math.min(contentHeight, maxHeroHeight)
+      : textHeight;
+    handleAnimation();
+  }, [isShowMore, contentHeight]);
+
+  const onTextLayout = (event: LayoutChangeEvent) => {
+    setContentHeight(event.nativeEvent.layout.height);
   };
 
   const onContainerPress = () => {
@@ -30,16 +76,47 @@ export default function Post({item}: PostProps) {
       toggleShowMore();
     }
   };
+
   const navigation: any = useNavigation();
-  const ImageInfo = createImageInfo(navigation);
+  const ImageInfo = createImageInfo(navigation, isLiked, setIsLiked);
 
-  const {height, width} = useWindowDimensions();
+  const DescriptionView = () => {
+    if (!item.description) {
+      return null;
+    }
+    if (item.description.length > 120) {
+      return (
+        <ScrollView
+          showsVerticalScrollIndicator={false}
+          style={{flexGrow: 0}}
+          contentContainerStyle={{
+            flexGrow: 0,
+          }}>
+          <Pressable onPress={toggleShowMore}>
+            <Text
+              style={styles.description}
+              onLayout={isShowMore ? onTextLayout : undefined}>
+              {isShowMore
+                ? item.description
+                : `${item.description.slice(0, 120)}...`}
+              <Text style={styles.showText}>
+                {isShowMore ? ' Show Less' : ' Show More'}
+              </Text>
+            </Text>
+          </Pressable>
+        </ScrollView>
+      );
+    } else {
+      return (
+        <Text style={styles.description} onLayout={onTextLayout}>
+          {item.description}
+        </Text>
+      );
+    }
+  };
 
-  const descriptionText =
-    'Lorem, ipsum dolor sit amet consectetur adipisicing elit. Ut temporibus veritatis consectetur adipisicing elit. Ut temporibus veritatisconsectetur adipisicing elit. Ut temporibus veritatisconsectetur adipisicing elit. Ut temporibus veritconsectetur adipisicing elit. Ut temporibus veritatis reprehenderit quo, amet facere. Quae in cupiditate quos? Doloremque facere delectus atque nostrum molestias sequi similique Lorem, ipsum dolor sit amet consectetur adipisicing elit. Ut temporibus veritatis reprehenderit quo, amet facere. Quae in cupiditate quos? Doloremque facere delectus atque nostrum molestias sequi similique Lorem, ipsum dolor sit amet consectetur adipisicing elit. Ut temporibus veritatis reprehenderit quo, amet facere. Quae in cupiditate quos? Doloremque facere delectus atque nostrum molestias sequi similique Lorem, ipsum dolor sit amet consectetur adipisicing elit. Ut temporibus veritatis reprehenderit quo, amet facere. Quae in cupiditate quos? Doloremque facere delectus atque nostrum molestias sequi similique animi! Exercitationem, provident?... ';
-  const maxHeroHeight = height - (64 + 60 + 40 + 60); // right under the header
   return (
-    <Pressable onPress={onContainerPress} style={{height}}>
+    <Pressable onPress={onContainerPress} style={{height, flex: 1}}>
       <LinearGradient
         colors={['rgba(0, 0, 0, 0.8)', 'transparent']}
         style={styles.topGradient}
@@ -49,51 +126,21 @@ export default function Post({item}: PostProps) {
         source={item.backgroundSource}
         style={styles.imageBackground}
         resizeMode="cover">
-        {isShowMore && (
-          <View
-            style={{
-              position: 'absolute',
-              top: 0,
-              left: 0,
-              zIndex: 99,
-              height: '100%',
-              width: '100%',
-              backgroundColor: 'rgba(0, 0, 0, 0.5)',
-            }}
-          />
-        )}
+        <Animated.View style={[styles.overlay, {opacity: animatedOpacity}]} />
         <View style={styles.heroContainer}>
           <View style={styles.imageAndText}>
             <Image source={item.logoSource} style={styles.logoImage} />
             <View style={styles.titleContainer}>
               <Text style={styles.title}>{item.title}</Text>
             </View>
-            <View
-              style={[styles.descriptionContainer, {maxHeight: maxHeroHeight}]}>
-              <ScrollView showsVerticalScrollIndicator={false}>
-                <Pressable onPress={toggleShowMore}>
-                  <Text style={styles.description}>
-                    {isShowMore
-                      ? descriptionText
-                      : `${descriptionText.slice(0, 120)}...`}
-                    <Text style={styles.showText}>
-                      {isShowMore ? 'Show Less' : ' Show More'}
-                    </Text>
-                  </Text>
-                </Pressable>
-              </ScrollView>
-            </View>
+            <Animated.View style={[styles.descriptionContainer, animatedStyle]}>
+              <DescriptionView />
+            </Animated.View>
           </View>
           <View style={styles.icons}>
             {ImageInfo.map(({id, source, text, onPress}) => (
               <View key={id} style={{}}>
-                <IconButton onPress={onPress}>
-                  <Image
-                    source={source}
-                    tintColor={'white'}
-                    style={styles.imageIcon}
-                  />
-                </IconButton>
+                <IconButton onPress={onPress} iconSource={source} />
                 {text ? <Text style={styles.text}>{text}</Text> : null}
               </View>
             ))}
@@ -117,9 +164,6 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'space-between',
     alignItems: 'center',
-  },
-  container: {
-    // flex: 1,
   },
   topGradient: {
     position: 'absolute',
@@ -158,7 +202,6 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   icons: {
-    // backgroundColor: 'green',
     gap: 15,
   },
   text: {
@@ -174,7 +217,7 @@ const styles = StyleSheet.create({
   },
   descriptionContainer: {
     maxWidth: 300,
-    // maxHeight: 550,
+    overflow: 'hidden',
   },
   description: {
     color: '#f0f0f0',
@@ -182,17 +225,20 @@ const styles = StyleSheet.create({
   },
   imageAndText: {
     gap: 12,
+    justifyContent: 'flex-end',
   },
-  imageIcon: {
-    height: 24,
-    width: 24,
-  },
-  showButton: {
-    color: '#00cc99',
-    display: 'flex',
-  },
+
   showText: {
     color: '#00cc99',
     fontWeight: 'bold',
+  },
+  overlay: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    zIndex: 99,
+    height: '100%',
+    width: '100%',
+    backgroundColor: 'rgba(0, 0, 0, 1)',
   },
 });

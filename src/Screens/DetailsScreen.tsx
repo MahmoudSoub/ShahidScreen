@@ -17,7 +17,7 @@ const DetailsScreen = ({navigation}: any) => {
   const [toggleCol, setToggleCol] = useState(false);
 
   const numOfCol = toggleCol ? 3 : 2;
-  const {height, width} = useWindowDimensions();
+  const {width} = useWindowDimensions();
   const MarginHorizontal = 2;
   const PaddingHorizontal = 10;
   const horizontalToSubtract = MarginHorizontal * 6 + PaddingHorizontal * 2;

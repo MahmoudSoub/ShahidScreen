@@ -12,7 +12,6 @@ function HomeHeader() {
         <Image
           source={require('../assets/search.png')}
           style={[styles.imageIcon, styles.searchIcon]}
-          // tintColor={'black'}
         />
         <Image
           source={require('../assets/emoji.png')}
