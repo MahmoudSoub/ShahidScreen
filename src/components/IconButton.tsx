@@ -1,8 +1,14 @@
-import {View, Pressable, StyleSheet, Image} from 'react-native';
+import {
+  View,
+  Pressable,
+  StyleSheet,
+  Image,
+  ImageSourcePropType,
+} from 'react-native';
 
 interface IconButtonProps {
   onPress?: () => void;
-  iconSource: any;
+  iconSource: ImageSourcePropType;
   tintColor: string | undefined;
 }
 

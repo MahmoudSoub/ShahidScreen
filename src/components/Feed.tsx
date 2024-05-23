@@ -1,5 +1,5 @@
 import React, {useCallback, useState} from 'react';
-import {FlatList, StyleSheet, View} from 'react-native';
+import {FlatList, StyleSheet, View, ViewToken} from 'react-native';
 import HomeHeader from './HomeHeader';
 import {PostType, posts} from '../assets/posts-mock-data';
 import Post from './Post';
@@ -8,7 +8,7 @@ function Feed() {
   const [activePostId, setActivePostId] = useState(posts[0].id);
 
   const onViewableItemsChanged = useCallback(
-    ({changed, viewableItems}: {changed: any; viewableItems: any}) => {
+    ({viewableItems}: {viewableItems: ViewToken<PostType>[]}) => {
       if (viewableItems.length > 0 && viewableItems[0].isViewable) {
         setActivePostId(viewableItems[0].item.id);
       }
