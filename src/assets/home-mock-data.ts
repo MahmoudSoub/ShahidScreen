@@ -14,6 +14,7 @@ const createImageInfo = (
   navigation: NavigationProp<any, any>,
   isLiked: boolean,
   setIsLiked: Dispatch<React.SetStateAction<boolean>>,
+  setModalVisible: Dispatch<React.SetStateAction<boolean>>,
 ): ImageInfoItem[] => [
   {
     id: 1,
@@ -48,7 +49,9 @@ const createImageInfo = (
     id: 5,
     source: require('../assets/more.png'),
     text: '',
-    onPress: () => {},
+    onPress: () => {
+      setModalVisible(true);
+    },
   },
 ];
 

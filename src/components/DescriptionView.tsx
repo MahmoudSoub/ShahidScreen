@@ -46,14 +46,9 @@ const DescriptionView = ({
   if (!item.description) {
     return null;
   }
-  if (item.description.length > 120) {
+  if (item.description.length >= 120) {
     return (
-      <ScrollView
-        showsVerticalScrollIndicator={false}
-        style={{flexGrow: 0}}
-        contentContainerStyle={{
-          flexGrow: 0,
-        }}>
+      <ScrollView showsVerticalScrollIndicator={false}>
         <Pressable onPress={toggleShowMore}>
           <Text
             style={styles.description}
@@ -69,11 +64,7 @@ const DescriptionView = ({
       </ScrollView>
     );
   } else {
-    return (
-      <Text style={styles.description} onLayout={onTextLayout}>
-        {item.description}
-      </Text>
-    );
+    return <Text style={styles.description}>{item.description}</Text>;
   }
 };
 

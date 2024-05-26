@@ -23,6 +23,7 @@ import Video, {VideoRef} from 'react-native-video';
 import Slider from '@react-native-community/slider';
 import DescriptionView from './DescriptionView';
 import {formatProgressTime} from '../util/ProgressTimeFormatter';
+import BottomModal from './BottomModal';
 
 interface PostProps {
   item: PostType;
@@ -30,6 +31,8 @@ interface PostProps {
 }
 
 export default function Post({item, activePostId}: PostProps) {
+  const [isModalVisible, setModalVisible] = useState(false);
+
   const [isLiked, setIsLiked] = useState(false);
   const [isShowMore, setIsShowMore] = useState(false);
   const [contentHeight, setContentHeight] = useState(0);
@@ -58,16 +61,27 @@ export default function Post({item, activePostId}: PostProps) {
     videoRef.current?.seek(0);
     setPaused(false);
   };
+  // const onContainerPress = () => {
+  //   if (isShowMore) {
+  //     toggleShowMore();
+  //   }
+  //   if (isPlaying && !isShowMore) {
+  //     setPaused(true);
+  //   } else {
+  //     if (!isShowMore) {
+  //       setPaused(false);
+  //     }
+  //   }
+  // };
+
   const onContainerPress = () => {
-    if (isShowMore) {
-      toggleShowMore();
-    }
-    if (isPlaying && !isShowMore) {
-      setPaused(true);
-    } else {
-      if (!isShowMore) {
-        setPaused(false);
+    if (!isShowMore) {
+      setPaused(false);
+      if (isPlaying) {
+        setPaused(true);
       }
+    } else {
+      toggleShowMore();
     }
   };
 
@@ -109,7 +123,16 @@ export default function Post({item, activePostId}: PostProps) {
     });
   };
   const navigation: any = useNavigation();
-  const ImageInfo = createImageInfo(navigation, isLiked, setIsLiked);
+  const ImageInfo = createImageInfo(
+    navigation,
+    isLiked,
+    setIsLiked,
+    setModalVisible,
+  );
+
+  const toggleModal = () => {
+    setModalVisible(!isModalVisible);
+  };
 
   return (
     <Pressable onPress={onContainerPress} style={{height, width, flex: 1}}>
@@ -211,6 +234,13 @@ export default function Post({item, activePostId}: PostProps) {
               </View>
             ))}
           </View>
+          <BottomModal
+            title={item.title}
+            episode={item.episode}
+            description={item.description}
+            isVisible={isModalVisible}
+            onClose={toggleModal}
+          />
         </View>
       </View>
       <View style={styles.progressContainer}>

@@ -7,6 +7,7 @@ export interface PostType {
   title: string;
   logoSource: ImageSourcePropType;
   description: string;
+  episode: string;
 }
 
 export const posts: PostType[] = [
@@ -18,7 +19,8 @@ export const posts: PostType[] = [
     title: 'Breaking Bad',
     logoSource: require('../assets/breaking-bad-logo.png'),
     description:
-      'Lorem, ipsum dolor sit amet consectetur adipisicing elit Ut temporibussit amet consectetur adipisicing elit.',
+      'Walt goes on the run. Jesse is taken hostage. Marie forces Skyler to tell Walter, Jr. the truth.Walt goes on the run. Jesse is taken hostage. Marie forces Skyler to tell Walter, Jr. the truth.Walt goes on the run. Jesse is taken hostage. Marie forces Skyler to tell Walter, Jr. the truth.Walt goes on the run. Jesse is taken hostage. Marie forces Skyler to tell Walter, Jr. the truth.Walt goes on the run. Jesse is taken hostage. Marie forces Skyler to tell Walter, Jr. the truth.Walt goes on the run. Jesse is taken hostage. Marie forces Skyler to tell Walter, Jr. the truth.Walt goes on the run. Jesse is taken hostage. Marie forces Skyler to tell Walter, Jr. the truth.',
+    episode: 'S5.E14 ∙ Ozymandias',
   },
   {
     id: 2,
@@ -28,7 +30,8 @@ export const posts: PostType[] = [
     title: 'Breaking Bad',
     logoSource: require('../assets/breaking-bad-logo.png'),
     description:
-      'Lorem, ipsum dolor sit amet consectetur adipisicing elit Ut temporibussit amet consectetur adipisicing elit.Lorem, ipsum dolor sit amet consectetur adipisicing elit Ut temporibussit amet consectetur adipisicing elit.',
+      "Walter White returns to Albuquerque one last time to secure his family's future and settle old scores.",
+    episode: 'S5.E16 ∙ Felina',
   },
   {
     id: 3,
@@ -38,7 +41,8 @@ export const posts: PostType[] = [
     title: 'Breaking Bad',
     logoSource: require('../assets/breaking-bad-logo.png'),
     description:
-      'Lorem, ipsum dolor sit amet consectetur adipisicing elit Ut temporibussit amet consectetur adipisicing elit.Lorem, ipsum dolor sit amet consectetur adipisicing elit Ut temporibussit amet consectetur adipisicing elit.Lorem, ipsum dolor sit amet consectetur adipisicing elit Ut temporibussit amet consectetur adipisicing elit.Lorem, ipsum dolor sit amet consectetur adipisicing elit Ut temporibussit amet consectetur adipisicing elit.Lorem, ipsum dolor sit amet consectetur adipisicing elit Ut temporibussit amet consectetur adipisicing elit.Lorem, ipsum dolor sit amet consectetur adipisicing elit Ut temporibussit amet consectetur adipisicing elit.Lorem, ipsum dolor sit amet consectetur adipisicing elit Ut temporibussit amet consectetur adipisicing elit.',
+      'Jesse is brought to the FBI for questioning on his knowledge of ricin. In a last effort to kill Gus, Walt must ask for help from an old enemy.',
+    episode: 'S4.E13 ∙ Face Off',
   },
   {
     id: 4,
@@ -48,7 +52,8 @@ export const posts: PostType[] = [
     title: 'Breaking Bad',
     logoSource: require('../assets/breaking-bad-logo.png'),
     description:
-      'Lorem, ipsum dolor sit amet consectetur adipisicing elit Ut temporibussit amet consectetur adipisicing elit.Lorem, ipsum dolor sit amet consectetur adipisicing elit Ut temporibussit amet consectetur adipisicing elit.Lorem, ipsum dolor sit amet consectetur adipisicing elit Ut temporibussit amet consectetur adipisicing elit.Lorem, ipsum dolor sit amet consectetur adipisicing elit Ut temporibussit amet consectetur adipisicing elit.Lorem, ipsum dolor sit amet consectetur adipisicing elit Ut temporibussit amet consectetur adipisicing elit.Lorem, ipsum dolor sit amet consectetur adipisicing elit Ut temporibussit amet consectetur adipisicing elit.Lorem, ipsum dolor sit amet consectetur adipisicing elit Ut temporibussit amet consectetur adipisicing elit.Lorem, ipsum dolor sit amet consectetur adipisicing elit Ut temporibussit amet consectetur adipisicing elit.Lorem, ipsum dolor sit amet consectetur adipisicing elit Ut temporibussit amet consectetur adipisicing elit.Lorem, ipsum dolor sit amet consectetur adipisicing elit Ut temporibussit amet consectetur adipisicing elit.Lorem, ipsum dolor sit amet consectetur adipisicing elit Ut temporibussit amet consectetur adipisicing elit.Lorem, ipsum dolor sit amet consectetur adipisicing elit Ut temporibussit amet consectetur adipisicing elit.Lorem, ipsum dolor sit amet consectetur adipisicing elit Ut temporibussit amet consectetur adipisicing elit.',
+      "Jesse and Hank come up with an idea to take Walt down. Walt hires Todd's uncle to kill Jesse.",
+    episode: "S5.E13 ∙ To'hajiilee",
   },
   {
     id: 5,
@@ -58,6 +63,7 @@ export const posts: PostType[] = [
     title: 'Breaking Bad',
     logoSource: require('../assets/breaking-bad-logo.png'),
     description:
-      'Lorem, ipsum dolor sit amet consectetur adipisicing elit Ut temporibussit amet consectetur adipisicing elit.Lorem, ipsum dolor sit amet consectetur adipisicing elit Ut temporibussit amet consectetur adipisicing elit.Lorem, ipsum dolor sit amet consectetur adipisicing elit Ut temporibussit amet consectetur adipisicing elit.Lorem, ipsum dolor sit amet consectetur adipisicing elit Ut temporibussit amet consectetur adipisicing elit.Lorem, ipsum dolor sit amet consectetur adipisicing elit Ut temporibussit amet consectetur adipisicing elit.Lorem, ipsum dolor sit amet consectetur adipisicing elit Ut temporibussit amet consectetur adipisicing elit.Lorem, ipsum dolor sit amet consectetur adipisicing elit Ut temporibussit amet consectetur adipisicing elit.Lorem, ipsum dolor sit amet consectetur adipisicing elit Ut temporibussit amet consectetur adipisicing elit.Lorem, ipsum dolor sit amet consectetur adipisicing elit Ut temporibussit amet consectetur adipisicing elit.Lorem, ipsum dolor sit amet consectetur adipisicing elit Ut temporibussit amet consectetur adipisicing elit.Lorem, ipsum dolor sit amet consectetur adipisicing elit Ut temporibussit amet consectetur adipisicing elit.Lorem, ipsum dolor sit amet consectetur adipisicing elit Ut temporibussit amet consectetur adipisicing elit.Lorem, ipsum dolor sit amet consectetur adipisicing elit Ut temporibussit amet consectetur adipisicing elit.Lorem, ipsum dolor sit amet consectetur adipisicing elit Ut temporibussit amet consectetur adipisicing elit.Lorem, ipsum dolor sit amet consectetur adipisicing elit Ut temporibussit amet consectetur adipisicing elit.Lorem, ipsum dolor sit amet consectetur adipisicing elit Ut temporibussit amet consectetur adipisicing elit.',
+      'Walt struggles as he adapts to aspects of his new identity. Jesse plans an escape against Jack and his crew.',
+    episode: 'S5.E15 ∙ Granite State',
   },
 ];
