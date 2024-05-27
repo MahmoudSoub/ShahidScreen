@@ -14,7 +14,8 @@ const createImageInfo = (
   navigation: NavigationProp<any, any>,
   isLiked: boolean,
   setIsLiked: Dispatch<React.SetStateAction<boolean>>,
-  setModalVisible: Dispatch<React.SetStateAction<boolean>>,
+  setMoreModalVisible: Dispatch<React.SetStateAction<boolean>>,
+  setIsCommentsModalVisible: Dispatch<React.SetStateAction<boolean>>,
 ): ImageInfoItem[] => [
   {
     id: 1,
@@ -37,7 +38,9 @@ const createImageInfo = (
     id: 3,
     source: require('../assets/chat.png'),
     text: '25',
-    onPress: () => {},
+    onPress: () => {
+      setIsCommentsModalVisible(true);
+    },
   },
   {
     id: 4,
@@ -50,7 +53,7 @@ const createImageInfo = (
     source: require('../assets/more.png'),
     text: '',
     onPress: () => {
-      setModalVisible(true);
+      setMoreModalVisible(true);
     },
   },
 ];

@@ -1,4 +1,3 @@
-// BottomModal.js
 import React from 'react';
 import {
   View,
@@ -12,7 +11,7 @@ import Modal from 'react-native-modal';
 import Colors from '../constants/Colors';
 import LinearGradient from 'react-native-linear-gradient';
 
-interface BottomModalProps {
+interface MoreModalProps {
   isVisible: boolean;
   onClose: () => void;
   title: string;
@@ -20,13 +19,13 @@ interface BottomModalProps {
   description: string;
 }
 
-export default function BottomModal({
+export default function MoreModal({
   isVisible,
   onClose,
   title,
   episode,
   description,
-}: BottomModalProps) {
+}: MoreModalProps) {
   const {height} = useWindowDimensions();
 
   const iconsData = [

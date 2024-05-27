@@ -6,7 +6,7 @@ import {
   ScrollView,
 } from 'react-native';
 import React, {useEffect} from 'react';
-import {Easing, useSharedValue, withTiming} from 'react-native-reanimated';
+import {useSharedValue} from 'react-native-reanimated';
 import {PostType} from '../assets/posts-mock-data';
 
 interface DescriptionViewProps {
@@ -55,7 +55,7 @@ const DescriptionView = ({
             onLayout={isShowMore ? onTextLayout : undefined}>
             {isShowMore
               ? item.description
-              : `${item.description.slice(0, 120)}...`}
+              : `${item.description.slice(0, 121)}...`}
             <Text style={styles.showText}>
               {isShowMore ? ' Show Less' : ' Show More'}
             </Text>

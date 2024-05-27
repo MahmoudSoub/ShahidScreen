@@ -23,7 +23,8 @@ import Video, {OnLoadData, OnProgressData, VideoRef} from 'react-native-video';
 import Slider from '@react-native-community/slider';
 import DescriptionView from './DescriptionView';
 import {formatProgressTime} from '../util/ProgressTimeFormatter';
-import BottomModal from './BottomModal';
+import MoreModal from './MoreModal';
+import CommentsModal from './CommentsModal';
 
 interface PostProps {
   item: PostType;
@@ -31,7 +32,8 @@ interface PostProps {
 }
 
 export default function Post({item, activePostId}: PostProps) {
-  const [isModalVisible, setModalVisible] = useState(false);
+  const [isMoreModalVisible, setMoreModalVisible] = useState(false);
+  const [isCommentsModalVisible, setIsCommentsModalVisible] = useState(false);
 
   const [isLiked, setIsLiked] = useState(false);
   const [isShowMore, setIsShowMore] = useState(false);
@@ -58,18 +60,6 @@ export default function Post({item, activePostId}: PostProps) {
     videoRef.current?.seek(0);
     setPaused(false);
   };
-  // const onContainerPress = () => {
-  //   if (isShowMore) {
-  //     toggleShowMore();
-  //   }
-  //   if (isPlaying && !isShowMore) {
-  //     setPaused(true);
-  //   } else {
-  //     if (!isShowMore) {
-  //       setPaused(false);
-  //     }
-  //   }
-  // };
 
   const onContainerPress = () => {
     if (!isShowMore) {
@@ -83,13 +73,8 @@ export default function Post({item, activePostId}: PostProps) {
   };
 
   useEffect(() => {
-    if (!videoRef.current) {
-      return;
-    }
-    if (activePostId !== item.id) {
-      setPaused(true);
-    } else {
-      setPaused(false);
+    if (videoRef.current) {
+      setPaused(activePostId !== item.id);
     }
   }, [activePostId, videoRef.current]);
 
@@ -106,7 +91,7 @@ export default function Post({item, activePostId}: PostProps) {
       : descriptionTextHeight;
     return {
       height: withTiming(height, {
-        duration: 300,
+        duration: 200,
         easing: Easing.inOut(Easing.ease),
       }),
     };
@@ -114,7 +99,7 @@ export default function Post({item, activePostId}: PostProps) {
 
   const handleAnimation = () => {
     animatedOpacity.value = withTiming(isShowMore ? 0.8 : 0, {
-      duration: 300,
+      duration: 200,
       easing: Easing.inOut(Easing.ease),
     });
   };
@@ -141,11 +126,15 @@ export default function Post({item, activePostId}: PostProps) {
     navigation,
     isLiked,
     setIsLiked,
-    setModalVisible,
+    setMoreModalVisible,
+    setIsCommentsModalVisible,
   );
 
-  const toggleModal = () => {
-    setModalVisible(!isModalVisible);
+  const toggleMoreModal = () => {
+    setMoreModalVisible(!isMoreModalVisible);
+  };
+  const toggleCommentsModal = () => {
+    setIsCommentsModalVisible(!isCommentsModalVisible);
   };
 
   return (
@@ -218,12 +207,19 @@ export default function Post({item, activePostId}: PostProps) {
               </View>
             ))}
           </View>
-          <BottomModal
+          <MoreModal
             title={item.title}
             episode={item.episode}
             description={item.description}
-            isVisible={isModalVisible}
-            onClose={toggleModal}
+            isVisible={isMoreModalVisible}
+            onClose={toggleMoreModal}
+          />
+          <CommentsModal
+            title={item.title}
+            episode={item.episode}
+            description={item.description}
+            isVisible={isCommentsModalVisible}
+            onClose={toggleCommentsModal}
           />
         </View>
       </View>
@@ -311,7 +307,7 @@ const styles = StyleSheet.create({
   },
   descriptionContainer: {
     maxWidth: 300,
-    overflow: 'hidden',
+    // overflow: 'hidden',
   },
 
   imageAndText: {
