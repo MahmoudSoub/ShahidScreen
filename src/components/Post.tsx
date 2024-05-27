@@ -19,7 +19,7 @@ import Animated, {
   useSharedValue,
   withTiming,
 } from 'react-native-reanimated';
-import Video, {VideoRef} from 'react-native-video';
+import Video, {OnLoadData, OnProgressData, VideoRef} from 'react-native-video';
 import Slider from '@react-native-community/slider';
 import DescriptionView from './DescriptionView';
 import {formatProgressTime} from '../util/ProgressTimeFormatter';
@@ -39,7 +39,6 @@ export default function Post({item, activePostId}: PostProps) {
   const [ended, setEnded] = useState(false);
   const [currentTime, setCurrentTime] = useState<number>();
   const [duration, setDuration] = useState<number>();
-  const [isPlaying, setIsPlaying] = useState(false);
   const [isSeeking, setIsSeeking] = useState(false);
   const [seekCurrentTime, setSeekCurrentTime] = useState(0);
   const [showReplayOverlay, setShowReplayOverlay] = useState(false);
@@ -52,8 +51,6 @@ export default function Post({item, activePostId}: PostProps) {
   const handleVideoEnded = () => {
     setEnded(true);
     setShowReplayOverlay(true);
-    if (currentTime?.toFixed(0) === duration?.toFixed(0)) {
-    }
   };
   const handleReplayPress = () => {
     setShowReplayOverlay(false);
@@ -77,7 +74,7 @@ export default function Post({item, activePostId}: PostProps) {
   const onContainerPress = () => {
     if (!isShowMore) {
       setPaused(false);
-      if (isPlaying) {
+      if (!paused) {
         setPaused(true);
       }
     } else {
@@ -91,8 +88,7 @@ export default function Post({item, activePostId}: PostProps) {
     }
     if (activePostId !== item.id) {
       setPaused(true);
-    }
-    if (activePostId === item.id) {
+    } else {
       setPaused(false);
     }
   }, [activePostId, videoRef.current]);
@@ -100,14 +96,14 @@ export default function Post({item, activePostId}: PostProps) {
   const toggleShowMore = () => {
     setIsShowMore(!isShowMore);
   };
-  const textHeight = item.description ? 42 : 0;
+  const descriptionTextHeight = item.description ? 42 : 0;
 
   const animatedOpacity = useSharedValue(0);
 
   const animatedStyle = useAnimatedStyle(() => {
     const height = isShowMore
       ? Math.min(contentHeight, maxHeroHeight)
-      : textHeight;
+      : descriptionTextHeight;
     return {
       height: withTiming(height, {
         duration: 300,
@@ -122,8 +118,26 @@ export default function Post({item, activePostId}: PostProps) {
       easing: Easing.inOut(Easing.ease),
     });
   };
+  const handleOnLoad = (e: OnLoadData) => {
+    setDuration(e.duration);
+  };
+  const handleOnProgress = (e: OnProgressData) => {
+    setCurrentTime(e.currentTime);
+  };
+  const handleOnSlidingStart = () => {
+    setIsSeeking(true);
+  };
+  const handleOnSlidingComplete = (val: number) => {
+    videoRef.current?.seek(val);
+    setPaused(false);
+    setIsSeeking(false);
+  };
+  const handleOnValueChange = (val: number) => {
+    setPaused(true);
+    setSeekCurrentTime(val);
+  };
   const navigation: any = useNavigation();
-  const ImageInfo = createImageInfo(
+  const imageInfo = createImageInfo(
     navigation,
     isLiked,
     setIsLiked,
@@ -141,11 +155,8 @@ export default function Post({item, activePostId}: PostProps) {
         style={styles.topGradient}
       />
       <Video
-        onLoad={e => setDuration(e.duration)}
-        onProgress={e => {
-          setCurrentTime(e.currentTime);
-        }}
-        onPlaybackStateChanged={e => setIsPlaying(e.isPlaying)}
+        onLoad={handleOnLoad}
+        onProgress={handleOnProgress}
         onEnd={handleVideoEnded}
         source={{uri: item.videoSource}}
         style={[StyleSheet.absoluteFill]}
@@ -154,47 +165,20 @@ export default function Post({item, activePostId}: PostProps) {
         paused={paused}
       />
       {!isSeeking && paused ? (
-        <View
-          style={{
-            display: ended ? 'none' : 'flex',
-            position: 'absolute',
-            height: '100%',
-            width: '100%',
-            justifyContent: 'center',
-            alignItems: 'center',
-            backgroundColor: 'rgba(0,0,0,0.4)',
-          }}>
+        <View style={[styles.pauseOverlay, {display: ended ? 'none' : 'flex'}]}>
           <Image
             source={require('../assets/playIcon.png')}
-            style={{
-              height: 65,
-              width: 65,
-              tintColor: 'white',
-            }}
+            style={styles.playIcon}
           />
         </View>
       ) : showReplayOverlay ? (
-        <Pressable
-          onPress={handleReplayPress}
-          style={{
-            position: 'absolute',
-            height: '100%',
-            width: '100%',
-            justifyContent: 'center',
-            alignItems: 'center',
-            backgroundColor: 'rgba(0,0,0,0.4)',
-            zIndex: 999999999999,
-          }}>
+        <Pressable onPress={handleReplayPress} style={styles.replayOverlay}>
           <ImageBackground
             source={item.backgroundSource}
             style={[StyleSheet.absoluteFill, styles.thumbnail]}>
             <Image
               source={require('../assets/replay.png')}
-              style={{
-                height: 65,
-                width: 65,
-                tintColor: 'white',
-              }}
+              style={styles.replayImage}
             />
           </ImageBackground>
         </Pressable>
@@ -216,15 +200,15 @@ export default function Post({item, activePostId}: PostProps) {
                 item={item}
                 maxHeroHeight={maxHeroHeight}
                 setContentHeight={setContentHeight}
-                textHeight={textHeight}
+                descriptionTextHeight={descriptionTextHeight}
                 toggleShowMore={toggleShowMore}
                 handleAnimation={handleAnimation}
               />
             </Animated.View>
           </View>
           <View style={styles.icons}>
-            {ImageInfo.map(({id, source, text, onPress, tintColor}) => (
-              <View key={id} style={{}}>
+            {imageInfo.map(({id, source, text, onPress, tintColor}) => (
+              <View key={id}>
                 <IconButton
                   onPress={onPress}
                   iconSource={source}
@@ -252,21 +236,12 @@ export default function Post({item, activePostId}: PostProps) {
           </Text>
         ) : null}
         <Slider
-          onSlidingStart={() => {
-            setIsSeeking(true);
-          }}
+          onSlidingStart={handleOnSlidingStart}
           thumbImage={{uri: 'thumbImage', scale: 5}}
-          onSlidingComplete={val => {
-            videoRef.current?.seek(val);
-            setPaused(false);
-            setIsSeeking(false);
-          }}
-          onValueChange={val => {
-            setPaused(true);
-            setSeekCurrentTime(val);
-          }}
+          onSlidingComplete={handleOnSlidingComplete}
+          onValueChange={handleOnValueChange}
           value={currentTime}
-          style={{width: '100%', height: 40, flex: 1}}
+          style={styles.slider}
           minimumValue={0}
           maximumValue={duration}
           minimumTrackTintColor="#00cc99"
@@ -283,15 +258,6 @@ export default function Post({item, activePostId}: PostProps) {
 }
 
 const styles = StyleSheet.create({
-  outerContainer: {
-    flex: 1,
-    backgroundColor: 'black',
-  },
-  innerContainer: {
-    flex: 1,
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
   topGradient: {
     position: 'absolute',
     top: 0,
@@ -327,7 +293,6 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
     justifyContent: 'flex-end',
     flex: 1,
-    // backgroundColor: 'green',
   },
   icons: {
     gap: 15,
@@ -365,13 +330,11 @@ const styles = StyleSheet.create({
   },
 
   heroAndIconsContainer: {
-    // backgroundColor: 'yellow',
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'flex-end',
   },
   progressContainer: {
-    // backgroundColor: 'red',
     position: 'absolute',
     bottom: 0,
     zIndex: 9999999,
@@ -383,10 +346,41 @@ const styles = StyleSheet.create({
     paddingBottom: 30,
   },
   progressText: {
-    // backgroundColor: 'green',
     color: 'white',
     fontWeight: '600',
     fontSize: 16,
     paddingBottom: 20,
+  },
+  slider: {
+    width: '100%',
+    height: 40,
+    flex: 1,
+  },
+  pauseOverlay: {
+    position: 'absolute',
+    height: '100%',
+    width: '100%',
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0,0,0,0.4)',
+  },
+  replayOverlay: {
+    position: 'absolute',
+    height: '100%',
+    width: '100%',
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0,0,0,0.4)',
+    zIndex: 999999999999,
+  },
+  playIcon: {
+    height: 65,
+    width: 65,
+    tintColor: 'white',
+  },
+  replayImage: {
+    height: 65,
+    width: 65,
+    tintColor: 'white',
   },
 });

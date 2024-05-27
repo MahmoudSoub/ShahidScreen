@@ -14,7 +14,7 @@ interface DescriptionViewProps {
   isShowMore: boolean;
   toggleShowMore: () => void;
   maxHeroHeight: number;
-  textHeight: number;
+  descriptionTextHeight: number;
   contentHeight: number;
   setContentHeight: (height: number) => void;
   handleAnimation: () => void;
@@ -25,7 +25,7 @@ const DescriptionView = ({
   isShowMore,
   toggleShowMore,
   maxHeroHeight,
-  textHeight,
+  descriptionTextHeight,
   contentHeight,
   setContentHeight,
   handleAnimation,
@@ -34,12 +34,12 @@ const DescriptionView = ({
     setContentHeight(event.nativeEvent.layout.height);
   };
 
-  const animatedHeight = useSharedValue(textHeight);
+  const animatedDescriptionHeight = useSharedValue(descriptionTextHeight);
 
   useEffect(() => {
-    animatedHeight.value = isShowMore
+    animatedDescriptionHeight.value = isShowMore
       ? Math.min(contentHeight, maxHeroHeight)
-      : textHeight;
+      : descriptionTextHeight;
     handleAnimation();
   }, [isShowMore, contentHeight]);
 

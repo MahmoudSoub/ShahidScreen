@@ -1,4 +1,4 @@
-import {ImageSourcePropType, StyleSheet, Text, View} from 'react-native';
+import {ImageSourcePropType, Text, View} from 'react-native';
 import React from 'react';
 import {Image} from 'react-native-reanimated/lib/typescript/Animated';
 
@@ -16,5 +16,3 @@ const ModalIcon = ({iconSource}: ModalIconProps) => {
 };
 
 export default ModalIcon;
-
-const styles = StyleSheet.create({});

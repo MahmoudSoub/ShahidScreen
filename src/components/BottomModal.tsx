@@ -73,7 +73,7 @@ export default function BottomModal({
           {iconsData.map(icon => {
             return (
               <View style={styles.iconsContainer} key={icon.id}>
-                <View style={{paddingVertical: 5}}>
+                <View style={styles.iconAndTextContainer}>
                   <ImageBackground
                     style={styles.backgroundImage}
                     source={require('../assets/modalIcon.png')}>
@@ -104,7 +104,6 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 20,
-    // marginBottom: 10,
     color: Colors.white,
     fontWeight: 'bold',
     paddingTop: 10,
@@ -141,5 +140,8 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     marginRight: 10,
+  },
+  iconAndTextContainer: {
+    paddingVertical: 5,
   },
 });
