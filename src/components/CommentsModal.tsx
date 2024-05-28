@@ -110,16 +110,16 @@ export default function CommentsModal({
         replies: [],
       };
       setComments(prevComments => [...prevComments, newCommentObj]);
+      setTimeout(() => {
+        scrollViewRef.current?.scrollToEnd({animated: true});
+      }, 100);
     }
-
     setNewComment('');
-    setTimeout(() => {
-      scrollViewRef.current?.scrollToEnd({animated: true});
-    }, 100);
   };
 
-  const handleReplyPress = (commentId: string) => {
+  const handleReplyPress = (commentId: string, name: string) => {
     setReplyToCommentId(commentId);
+    setNewComment(`@${name} `);
     inputRef.current?.focus();
   };
 
@@ -146,6 +146,7 @@ export default function CommentsModal({
           </View>
         </View>
         <ScrollView
+          contentContainerStyle={{paddingBottom: 20}}
           keyboardShouldPersistTaps={'handled'}
           ref={scrollViewRef}
           bounces={false}
@@ -159,35 +160,38 @@ export default function CommentsModal({
                     style={{height: 45, width: 45}}
                   />
                   <View style={styles.commentAndReply}>
-                    <View style={styles.comment}>
-                      <View style={styles.nameAndTimeAndIcon}>
-                        <View style={styles.nameAndTime}>
-                          <Text
-                            style={
-                              styles.commentNameAndTime
-                            }>{`${comment.name} • `}</Text>
-                          <Text style={styles.commentNameAndTime}>
-                            {comment.time}
+                    <Pressable
+                      onPress={() =>
+                        handleReplyPress(comment.id, comment.name)
+                      }>
+                      <View style={styles.comment}>
+                        <View style={styles.nameAndTimeAndIcon}>
+                          <View style={styles.nameAndTime}>
+                            <Text
+                              style={
+                                styles.commentNameAndTime
+                              }>{`${comment.name} • `}</Text>
+                            <Text style={styles.commentNameAndTime}>
+                              {comment.time}
+                            </Text>
+                          </View>
+                          <Image
+                            source={require('../assets/more.png')}
+                            style={styles.moreIcon}
+                            tintColor={Colors.textOffWhite}
+                          />
+                        </View>
+                        <View style={styles.commentTextContainer}>
+                          <Text style={styles.commentText}>
+                            {comment.comment}
                           </Text>
                         </View>
-                        <Image
-                          source={require('../assets/more.png')}
-                          style={styles.moreIcon}
-                          tintColor={Colors.textOffWhite}
-                        />
                       </View>
-                      <View style={styles.commentTextContainer}>
-                        <Text style={styles.commentText}>
-                          {comment.comment}
-                        </Text>
-                      </View>
-                    </View>
-                    <View style={styles.replies}>
-                      <Pressable onPress={() => handleReplyPress(comment.id)}>
+                      <View>
                         <Text style={styles.reply}>Reply</Text>
-                      </Pressable>
-                      <RepliesView comment={comment} />
-                    </View>
+                      </View>
+                    </Pressable>
+                    <RepliesView comment={comment} />
                   </View>
                 </View>
               );
@@ -197,6 +201,7 @@ export default function CommentsModal({
         <View style={styles.footer}>
           <View style={styles.textInputContainer}>
             <TextInput
+              //   defaultValue="start typing"
               ref={inputRef}
               value={newComment}
               onChangeText={setNewComment}
@@ -254,7 +259,7 @@ const styles = StyleSheet.create({
     borderTopRightRadius: 15,
     borderBottomRightRadius: 15,
     borderBottomLeftRadius: 15,
-    backgroundColor: Colors.commentBg,
+    backgroundColor: Colors.secondaryBackground,
   },
   commentNameAndTime: {
     color: Colors.textOffWhite,
@@ -311,8 +316,5 @@ const styles = StyleSheet.create({
   sendImage: {
     height: 30,
     width: 30,
-  },
-  replies: {
-    // paddingBottom: 5,
   },
 });

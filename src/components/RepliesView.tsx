@@ -15,16 +15,9 @@ const RepliesView = ({comment}: {comment: Comment}) => {
   if (comment.replies.length === 1) {
     const {name, time, reply, imageSource} = comment.replies[0];
     return (
-      <View style={{flexDirection: 'row', marginBottom: 10}}>
-        <Image source={imageSource} style={{height: 30, width: 30}} />
-        <View
-          style={[
-            styles.comment,
-            {
-              marginLeft: 10,
-              backgroundColor: Colors.secondaryBackground,
-            },
-          ]}>
+      <View style={styles.commentContainer}>
+        <Image source={imageSource} style={styles.avatarImage} />
+        <View style={styles.comment}>
           <View style={styles.nameAndTimeAndIcon}>
             <View style={styles.nameAndTime}>
               <Text style={styles.commentNameAndTime}>{`${name} • `}</Text>
@@ -32,7 +25,7 @@ const RepliesView = ({comment}: {comment: Comment}) => {
             </View>
             <Image
               source={require('../assets/more.png')}
-              style={{height: 15, width: 15, margin: 2}}
+              style={styles.moreImage}
               tintColor={Colors.textOffWhite}
             />
           </View>
@@ -47,16 +40,9 @@ const RepliesView = ({comment}: {comment: Comment}) => {
     return (
       <View>
         {comment.replies.map((reply: Replies) => (
-          <View style={{flexDirection: 'row', marginBottom: 10}} key={reply.id}>
-            <Image source={reply.imageSource} style={{height: 30, width: 30}} />
-            <View
-              style={[
-                styles.comment,
-                {
-                  marginLeft: 10,
-                  backgroundColor: Colors.secondaryBackground,
-                },
-              ]}>
+          <View style={styles.commentContainer} key={reply.id}>
+            <Image source={reply.imageSource} style={styles.avatarImage} />
+            <View style={styles.comment}>
               <View style={styles.nameAndTimeAndIcon}>
                 <View style={styles.nameAndTime}>
                   <Text
@@ -67,7 +53,7 @@ const RepliesView = ({comment}: {comment: Comment}) => {
                 </View>
                 <Image
                   source={require('../assets/more.png')}
-                  style={{height: 15, width: 15, margin: 2}}
+                  style={styles.moreImage}
                   tintColor={Colors.textOffWhite}
                 />
               </View>
@@ -79,25 +65,22 @@ const RepliesView = ({comment}: {comment: Comment}) => {
         ))}
       </View>
     );
+  } else {
+    return (
+      <Pressable onPress={handleViewRepliesPress}>
+        <Text style={styles.viewRepliesText}>
+          ⎯ View {comment.replies.length} replies
+        </Text>
+      </Pressable>
+    );
   }
-  return (
-    <Pressable onPress={handleViewRepliesPress}>
-      <Text style={{color: Colors.white}}>
-        ⎯ View {comment.replies.length} replies
-      </Text>
-    </Pressable>
-  );
 };
 
 export default RepliesView;
 
 const styles = StyleSheet.create({
-  commentsContainer: {
-    padding: 20,
-  },
   commentContainer: {
     flexDirection: 'row',
-    gap: 10,
     marginBottom: 10,
   },
   comment: {
@@ -105,7 +88,8 @@ const styles = StyleSheet.create({
     borderTopRightRadius: 15,
     borderBottomRightRadius: 15,
     borderBottomLeftRadius: 15,
-    backgroundColor: Colors.commentBg,
+    marginLeft: 10,
+    backgroundColor: Colors.secondaryBackground,
   },
   commentNameAndTime: {
     color: Colors.textOffWhite,
@@ -119,11 +103,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
   },
-  moreIcon: {
-    height: 20,
-    width: 20,
-    margin: 5,
-  },
   nameAndTime: {
     paddingTop: 5,
     paddingLeft: 10,
@@ -132,34 +111,18 @@ const styles = StyleSheet.create({
   commentTextContainer: {
     padding: 10,
   },
-  commentAndReply: {
-    flex: 1,
+  moreImage: {
+    height: 15,
+    width: 15,
+    margin: 5,
   },
-  reply: {
+  viewRepliesText: {
     color: Colors.textOffWhite,
-    padding: 10,
-  },
-  footer: {
-    paddingHorizontal: 20,
-    paddingVertical: 20,
-    backgroundColor: Colors.secondaryBackground,
-  },
-  textInputContainer: {
     flexDirection: 'row',
-    backgroundColor: Colors.primaryBackground,
-    justifyContent: 'space-between',
-    borderRadius: 50,
-    padding: 10,
+    marginBottom: 10,
   },
-  textInput: {
-    flex: 1,
-    color: Colors.white,
-  },
-  sendImage: {
+  avatarImage: {
     height: 30,
     width: 30,
-  },
-  replies: {
-    // paddingBottom: 5,
   },
 });
