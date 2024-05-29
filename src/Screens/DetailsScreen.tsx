@@ -1,6 +1,5 @@
 import React, {useCallback, useState} from 'react';
 import {
-  Dimensions,
   FlatList,
   Image,
   Pressable,
@@ -10,15 +9,15 @@ import {
   useWindowDimensions,
 } from 'react-native';
 import DetailsHeader from '../components/DetailsHeader';
-import {gridImages} from '../assets/mock-data';
-import type {gridImagesType} from '../assets/mock-data';
+import {gridImages} from '../assets/grid-mock-data';
+import type {gridImagesType} from '../assets/grid-mock-data';
 import {formatNumber} from '../util/NumberFormatter';
 
 const DetailsScreen = ({navigation}: any) => {
   const [toggleCol, setToggleCol] = useState(false);
 
   const numOfCol = toggleCol ? 3 : 2;
-  const {height, width} = useWindowDimensions();
+  const {width} = useWindowDimensions();
   const MarginHorizontal = 2;
   const PaddingHorizontal = 10;
   const horizontalToSubtract = MarginHorizontal * 6 + PaddingHorizontal * 2;
