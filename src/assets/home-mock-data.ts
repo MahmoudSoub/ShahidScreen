@@ -1,9 +1,11 @@
 import {ImageSourcePropType} from 'react-native';
 import {NavigationProp} from '@react-navigation/native';
+import {Dispatch} from 'react';
 
 export interface ImageInfoItem {
   id: number;
   source: ImageSourcePropType;
+  tintColor?: string | undefined;
   text: string;
   onPress: () => void;
 }
@@ -11,7 +13,7 @@ export interface ImageInfoItem {
 const createImageInfo = (
   navigation: NavigationProp<any, any>,
   isLiked: boolean,
-  setIsLiked: React.Dispatch<React.SetStateAction<boolean>>,
+  setIsLiked: Dispatch<React.SetStateAction<boolean>>,
 ): ImageInfoItem[] => [
   {
     id: 1,
@@ -24,6 +26,7 @@ const createImageInfo = (
   {
     id: 2,
     source: require('../assets/like.png'),
+    tintColor: isLiked ? 'green' : undefined,
     text: '153',
     onPress: () => {
       setIsLiked(!isLiked);
