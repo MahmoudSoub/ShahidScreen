@@ -34,6 +34,7 @@ interface PostProps {
 export default function Post({item, activePostId}: PostProps) {
   const [isMoreModalVisible, setMoreModalVisible] = useState(false);
   const [isCommentsModalVisible, setIsCommentsModalVisible] = useState(false);
+  const [commentsLength, setCommentsLength] = useState<number | null>(null);
 
   const [isLiked, setIsLiked] = useState(false);
   const [isShowMore, setIsShowMore] = useState(false);
@@ -128,6 +129,7 @@ export default function Post({item, activePostId}: PostProps) {
     setIsLiked,
     setMoreModalVisible,
     setIsCommentsModalVisible,
+    commentsLength,
   );
 
   const toggleMoreModal = () => {
@@ -215,9 +217,7 @@ export default function Post({item, activePostId}: PostProps) {
             onClose={toggleMoreModal}
           />
           <CommentsModal
-            title={item.title}
-            episode={item.episode}
-            description={item.description}
+            onCommentLengthChange={length => setCommentsLength(length)}
             isVisible={isCommentsModalVisible}
             onClose={toggleCommentsModal}
           />

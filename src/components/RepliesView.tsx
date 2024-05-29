@@ -1,42 +1,28 @@
 import {Image, Pressable, StyleSheet, Text, View} from 'react-native';
-import React, {useState} from 'react';
+import React, {Dispatch, SetStateAction, useEffect, useState} from 'react';
 import {Comment, Replies} from './CommentsModal';
 import Colors from '../constants/Colors';
 
-const RepliesView = ({comment}: {comment: Comment}) => {
-  const [isViewReplies, setIsViewReplies] = useState(false);
+interface RepliesViewProps {
+  comment: Comment;
+  isExpanded: boolean | null;
+  setIsExpanded: React.Dispatch<React.SetStateAction<boolean | null>>;
+}
 
+export default function RepliesView({
+  comment,
+  isExpanded,
+  setIsExpanded,
+}: RepliesViewProps) {
   const handleViewRepliesPress = () => {
-    setIsViewReplies(true);
+    setIsExpanded(true);
   };
+
   if (comment.replies.length === 0) {
     return null;
   }
-  if (comment.replies.length === 1) {
-    const {name, time, reply, imageSource} = comment.replies[0];
-    return (
-      <View style={styles.commentContainer}>
-        <Image source={imageSource} style={styles.avatarImage} />
-        <View style={styles.comment}>
-          <View style={styles.nameAndTimeAndIcon}>
-            <View style={styles.nameAndTime}>
-              <Text style={styles.commentNameAndTime}>{`${name} • `}</Text>
-              <Text style={styles.commentNameAndTime}>{time}</Text>
-            </View>
-            <Image
-              source={require('../assets/more.png')}
-              style={styles.moreImage}
-              tintColor={Colors.textOffWhite}
-            />
-          </View>
-          <View style={styles.commentTextContainer}>
-            <Text style={styles.commentText}>{reply}</Text>
-          </View>
-        </View>
-      </View>
-    );
-  }
-  if (isViewReplies) {
+
+  if (isExpanded) {
     return (
       <View>
         {comment.replies.map((reply: Replies) => (
@@ -74,9 +60,7 @@ const RepliesView = ({comment}: {comment: Comment}) => {
       </Pressable>
     );
   }
-};
-
-export default RepliesView;
+}
 
 const styles = StyleSheet.create({
   commentContainer: {

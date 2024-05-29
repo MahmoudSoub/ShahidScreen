@@ -1,4 +1,4 @@
-import React, {useEffect, useRef, useState} from 'react';
+import React, {useCallback, useEffect, useRef, useState} from 'react';
 import {
   View,
   Text,
@@ -6,23 +6,22 @@ import {
   useWindowDimensions,
   Image,
   Pressable,
-  ScrollView,
   TextInput,
   ImageRequireSource,
-  Keyboard,
+  ListRenderItem,
+  FlatList,
 } from 'react-native';
 import Modal from 'react-native-modal';
 import Colors from '../constants/Colors';
-import RepliesView from './RepliesView';
 import {mockComments} from '../assets/comments-mock-data';
+import CommentView from './CommentView';
 
 interface CommentsModalProps {
   isVisible: boolean;
   onClose: () => void;
-  title: string;
-  episode: string;
-  description: string;
+  onCommentLengthChange: (length: number) => void;
 }
+
 export interface Comment {
   id: string;
   name: string;
@@ -31,6 +30,7 @@ export interface Comment {
   comment: string;
   replies: Replies[];
 }
+
 export interface Replies {
   id: string;
   name: string;
@@ -42,14 +42,18 @@ export interface Replies {
 export default function CommentsModal({
   isVisible,
   onClose,
+  onCommentLengthChange,
 }: CommentsModalProps) {
   const {height} = useWindowDimensions();
-  const scrollViewRef = useRef<ScrollView>(null);
   const inputRef = useRef<TextInput>(null);
   const [replyToCommentId, setReplyToCommentId] = useState<string | null>(null);
-
   const [newComment, setNewComment] = useState('');
   const [comments, setComments] = useState<Comment[]>(mockComments);
+  const flatlistRef = useRef<FlatList>(null);
+
+  useEffect(() => {
+    onCommentLengthChange(comments.length);
+  }, [comments.length]);
 
   const avatars = [
     require('../assets/avatar1.png'),
@@ -58,27 +62,13 @@ export default function CommentsModal({
   ];
   const names = ['Ahmad', 'Mahmoud', 'John', 'Mark'];
 
-  //   useEffect(() => {
-  //     const keyboardDidHideListener = Keyboard.addListener(
-  //       'keyboardDidHide',
-  //       () => {
-  //         setReplyToCommentId(null);
-  //       },
-  //     );
-
-  //     return () => {
-  //       keyboardDidHideListener.remove();
-  //     };
-  //   }, []);
-
   const handleSend = () => {
-    console.log({replyToCommentId});
-
     if (newComment.trim() === '') {
       return;
     }
     const randomAvatar = avatars[Math.floor(Math.random() * avatars.length)];
     const randomName = names[Math.floor(Math.random() * names.length)];
+
     if (replyToCommentId) {
       setComments(prevComments =>
         prevComments.map(comment =>
@@ -110,18 +100,26 @@ export default function CommentsModal({
         replies: [],
       };
       setComments(prevComments => [...prevComments, newCommentObj]);
+
       setTimeout(() => {
-        scrollViewRef.current?.scrollToEnd({animated: true});
+        flatlistRef.current?.scrollToEnd({animated: true});
       }, 100);
     }
     setNewComment('');
   };
 
-  const handleReplyPress = (commentId: string, name: string) => {
-    setReplyToCommentId(commentId);
-    setNewComment(`@${name} `);
-    inputRef.current?.focus();
-  };
+  const handleRenderItem: ListRenderItem<Comment> = useCallback(({item}) => {
+    return (
+      <Pressable>
+        <CommentView
+          comment={item}
+          inputRef={inputRef}
+          setReplyToCommentId={setReplyToCommentId}
+          setNewComment={setNewComment}
+        />
+      </Pressable>
+    );
+  }, []);
 
   return (
     <Modal
@@ -134,7 +132,7 @@ export default function CommentsModal({
       style={styles.modal}>
       <View style={[styles.modalContent, {maxHeight: height * 0.8}]}>
         <View style={styles.header}>
-          <View style={{width: 20, height: 20}} />
+          <View style={{width: 30, height: 30, marginLeft: 10}} />
           <Text style={styles.title}>{comments.length} Comments</Text>
           <View>
             <Pressable onPress={onClose}>
@@ -145,66 +143,25 @@ export default function CommentsModal({
             </Pressable>
           </View>
         </View>
-        <ScrollView
-          contentContainerStyle={{paddingBottom: 20}}
-          keyboardShouldPersistTaps={'handled'}
-          ref={scrollViewRef}
-          bounces={false}
-          style={styles.commentsContainer}>
-          <Pressable>
-            {comments.map(comment => {
-              return (
-                <View key={comment.id} style={styles.commentContainer}>
-                  <Image
-                    source={comment.imageSource}
-                    style={{height: 45, width: 45}}
-                  />
-                  <View style={styles.commentAndReply}>
-                    <Pressable
-                      onPress={() =>
-                        handleReplyPress(comment.id, comment.name)
-                      }>
-                      <View style={styles.comment}>
-                        <View style={styles.nameAndTimeAndIcon}>
-                          <View style={styles.nameAndTime}>
-                            <Text
-                              style={
-                                styles.commentNameAndTime
-                              }>{`${comment.name} • `}</Text>
-                            <Text style={styles.commentNameAndTime}>
-                              {comment.time}
-                            </Text>
-                          </View>
-                          <Image
-                            source={require('../assets/more.png')}
-                            style={styles.moreIcon}
-                            tintColor={Colors.textOffWhite}
-                          />
-                        </View>
-                        <View style={styles.commentTextContainer}>
-                          <Text style={styles.commentText}>
-                            {comment.comment}
-                          </Text>
-                        </View>
-                      </View>
-                      <View>
-                        <Text style={styles.reply}>Reply</Text>
-                      </View>
-                    </Pressable>
-                    <RepliesView comment={comment} />
-                  </View>
-                </View>
-              );
-            })}
-          </Pressable>
-        </ScrollView>
+        <FlatList
+          ref={flatlistRef}
+          showsVerticalScrollIndicator={false}
+          contentContainerStyle={{padding: 20}}
+          data={comments}
+          keyExtractor={item => item.id}
+          renderItem={handleRenderItem}
+        />
         <View style={styles.footer}>
           <View style={styles.textInputContainer}>
             <TextInput
-              //   defaultValue="start typing"
               ref={inputRef}
               value={newComment}
-              onChangeText={setNewComment}
+              onChangeText={text => {
+                setNewComment(text);
+                if (text.length === 0) {
+                  setReplyToCommentId(null);
+                }
+              }}
               placeholder={
                 replyToCommentId ? 'Type a reply...' : 'Type a message...'
               }
@@ -316,5 +273,8 @@ const styles = StyleSheet.create({
   sendImage: {
     height: 30,
     width: 30,
+  },
+  pressed: {
+    opacity: 0.7,
   },
 });

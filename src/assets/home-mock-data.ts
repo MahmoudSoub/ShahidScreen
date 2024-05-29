@@ -6,7 +6,7 @@ export interface ImageInfoItem {
   id: number;
   source: ImageSourcePropType;
   tintColor?: string | undefined;
-  text: string;
+  text: number | null | string;
   onPress: () => void;
 }
 
@@ -16,6 +16,7 @@ const createImageInfo = (
   setIsLiked: Dispatch<React.SetStateAction<boolean>>,
   setMoreModalVisible: Dispatch<React.SetStateAction<boolean>>,
   setIsCommentsModalVisible: Dispatch<React.SetStateAction<boolean>>,
+  commentsLength: number | null,
 ): ImageInfoItem[] => [
   {
     id: 1,
@@ -37,7 +38,7 @@ const createImageInfo = (
   {
     id: 3,
     source: require('../assets/chat.png'),
-    text: '25',
+    text: commentsLength,
     onPress: () => {
       setIsCommentsModalVisible(true);
     },
