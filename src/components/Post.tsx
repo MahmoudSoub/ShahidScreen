@@ -181,7 +181,7 @@ export default function Post({item, activePostId}: PostProps) {
         <View style={styles.heroAndIconsContainer}>
           <View style={styles.imageAndText}>
             <Image source={item.logoSource} style={styles.logoImage} />
-            <View style={styles.titleContainer}>
+            <View>
               <Text style={styles.title}>{item.title}</Text>
             </View>
             <Animated.View style={[styles.descriptionContainer, animatedStyle]}>
@@ -299,7 +299,6 @@ const styles = StyleSheet.create({
     fontWeight: '500',
     color: 'white',
   },
-  titleContainer: {},
   title: {
     fontSize: 18,
     color: 'white',
@@ -307,7 +306,6 @@ const styles = StyleSheet.create({
   },
   descriptionContainer: {
     maxWidth: 300,
-    // overflow: 'hidden',
   },
 
   imageAndText: {

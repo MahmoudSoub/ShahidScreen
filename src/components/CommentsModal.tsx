@@ -203,56 +203,10 @@ const styles = StyleSheet.create({
     height: 30,
     marginRight: 10,
   },
-  commentsContainer: {
-    padding: 20,
-  },
-  commentContainer: {
-    flexDirection: 'row',
-    gap: 10,
-    marginBottom: 10,
-  },
-  comment: {
-    flex: 1,
-    borderTopRightRadius: 15,
-    borderBottomRightRadius: 15,
-    borderBottomLeftRadius: 15,
-    backgroundColor: Colors.secondaryBackground,
-  },
-  commentNameAndTime: {
-    color: Colors.textOffWhite,
-  },
-  commentText: {
-    color: Colors.white,
-  },
   title: {
     fontSize: 20,
     color: Colors.white,
     fontWeight: 'bold',
-  },
-  nameAndTimeAndIcon: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-  },
-  moreIcon: {
-    height: 20,
-    width: 20,
-    margin: 5,
-  },
-  nameAndTime: {
-    paddingTop: 5,
-    paddingLeft: 10,
-    flexDirection: 'row',
-  },
-  commentTextContainer: {
-    padding: 10,
-  },
-  commentAndReply: {
-    flex: 1,
-  },
-  reply: {
-    color: Colors.textOffWhite,
-    padding: 10,
   },
   footer: {
     paddingHorizontal: 20,

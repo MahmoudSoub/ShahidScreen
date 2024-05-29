@@ -6,7 +6,7 @@ import {
   TextInput,
   View,
 } from 'react-native';
-import React, {useEffect, useMemo, useRef, useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import RepliesView from './RepliesView';
 import {Comment} from './CommentsModal';
 import Colors from '../constants/Colors';
@@ -74,7 +74,7 @@ const CommentView = ({
           <Pressable
             style={({pressed}) => (pressed ? styles.pressed : null)}
             onPress={() => handleReplyPress(comment.id, comment.name)}>
-            <Text style={styles.reply}>Reply</Text>
+            <Text style={styles.replyText}>Reply</Text>
           </Pressable>
           <Pressable
             style={({pressed}) => (pressed ? styles.pressed : null)}
@@ -105,25 +105,6 @@ const CommentView = ({
 export default CommentView;
 
 const styles = StyleSheet.create({
-  modal: {
-    justifyContent: 'flex-end',
-    margin: 0,
-  },
-  modalContent: {
-    backgroundColor: Colors.modalContentBg,
-  },
-  header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    height: 60,
-    backgroundColor: Colors.secondaryBackground,
-  },
-  closeImage: {
-    width: 30,
-    height: 30,
-    marginRight: 10,
-  },
   commentContainer: {
     flexDirection: 'row',
     gap: 10,
@@ -141,11 +122,6 @@ const styles = StyleSheet.create({
   },
   commentText: {
     color: Colors.white,
-  },
-  title: {
-    fontSize: 20,
-    color: Colors.white,
-    fontWeight: 'bold',
   },
   nameAndTimeAndIcon: {
     flexDirection: 'row',
@@ -168,29 +144,9 @@ const styles = StyleSheet.create({
   commentAndReply: {
     flex: 1,
   },
-  reply: {
+  replyText: {
     color: Colors.textOffWhite,
     padding: 10,
-  },
-  footer: {
-    paddingHorizontal: 20,
-    paddingVertical: 20,
-    backgroundColor: Colors.secondaryBackground,
-  },
-  textInputContainer: {
-    flexDirection: 'row',
-    backgroundColor: Colors.primaryBackground,
-    justifyContent: 'space-between',
-    borderRadius: 50,
-    padding: 10,
-  },
-  textInput: {
-    flex: 1,
-    color: Colors.white,
-  },
-  sendImage: {
-    height: 30,
-    width: 30,
   },
   pressed: {
     opacity: 0.7,
