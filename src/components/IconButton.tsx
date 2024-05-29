@@ -1,12 +1,18 @@
-import {ReactNode} from 'react';
-import {View, Text, Pressable, StyleSheet} from 'react-native';
+import {
+  View,
+  Pressable,
+  StyleSheet,
+  Image,
+  ImageSourcePropType,
+} from 'react-native';
 
 interface IconButtonProps {
-  children: ReactNode;
   onPress?: () => void;
+  iconSource: ImageSourcePropType;
+  tintColor: string | undefined;
 }
 
-function IconButton({children, onPress}: IconButtonProps) {
+function IconButton({onPress, iconSource, tintColor}: IconButtonProps) {
   return (
     <View style={styles.buttonOuterContainer}>
       <Pressable
@@ -16,7 +22,11 @@ function IconButton({children, onPress}: IconButtonProps) {
             : styles.buttonInnerContainer
         }
         onPress={onPress}>
-        {children}
+        <Image
+          source={iconSource}
+          tintColor={tintColor}
+          style={styles.imageIcon}
+        />
       </Pressable>
     </View>
   );
@@ -33,7 +43,7 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
   },
   buttonInnerContainer: {
-    backgroundColor: 'rgba(62, 73, 91, 0.4)',
+    backgroundColor: 'rgba(62, 73, 91, 0.8)',
     justifyContent: 'center',
     alignItems: 'center',
     height: '100%',
@@ -41,5 +51,9 @@ const styles = StyleSheet.create({
 
   pressed: {
     opacity: 0.75,
+  },
+  imageIcon: {
+    height: 24,
+    width: 24,
   },
 });

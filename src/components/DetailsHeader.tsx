@@ -7,9 +7,7 @@ interface DetailsHeaderProps {
 function DetailsHeader({handleBackPress}: DetailsHeaderProps) {
   return (
     <View style={styles.container}>
-      <Pressable
-        onPress={handleBackPress}
-        hitSlop={{top: 10, bottom: 10, left: 10, right: 10}}>
+      <Pressable onPress={handleBackPress} hitSlop={styles.hitSlop}>
         <Image
           source={require('../assets/arrowleft.png')}
           style={styles.imageIcon}
@@ -43,4 +41,5 @@ const styles = StyleSheet.create({
     height: 25,
     width: 25,
   },
+  hitSlop: {top: 50, bottom: 50, left: 50, right: 50},
 });

@@ -12,6 +12,7 @@ import DetailsHeader from '../components/DetailsHeader';
 import {gridImages} from '../assets/grid-mock-data';
 import type {gridImagesType} from '../assets/grid-mock-data';
 import {formatNumber} from '../util/NumberFormatter';
+import Colors from '../constants/Colors';
 
 const DetailsScreen = ({navigation}: any) => {
   const [toggleCol, setToggleCol] = useState(false);
@@ -41,9 +42,9 @@ const DetailsScreen = ({navigation}: any) => {
 
         <Text style={styles.showInfo}>Show Info</Text>
         <Pressable
-          style={{position: 'absolute', right: 10, bottom: 0}}
+          style={styles.switchBtn}
           onPress={() => setToggleCol(!toggleCol)}>
-          <Text style={{color: 'white'}}>SWITCH</Text>
+          <Text style={styles.switchText}>SWITCH</Text>
         </Pressable>
       </View>
     );
@@ -69,9 +70,7 @@ const DetailsScreen = ({navigation}: any) => {
               tintColor={'white'}
               style={styles.playIcon}
             />
-            <Text style={{color: 'white', fontSize: 12, fontWeight: '700'}}>
-              {formattedViews}
-            </Text>
+            <Text style={styles.viewsText}>{formattedViews}</Text>
           </View>
         </View>
       );
@@ -84,11 +83,7 @@ const DetailsScreen = ({navigation}: any) => {
       <DetailsHeader handleBackPress={handleBackPress} />
       <FlatList
         bounces={false}
-        contentContainerStyle={{
-          alignItems: 'center',
-          paddingBottom: 20,
-          backgroundColor: '#181d25',
-        }}
+        contentContainerStyle={styles.listContentContainer}
         showsVerticalScrollIndicator={false}
         ListHeaderComponent={renderListHeader}
         numColumns={numOfCol}
@@ -150,5 +145,23 @@ const styles = StyleSheet.create({
     height: 15,
     width: 15,
     marginRight: 4,
+  },
+  switchText: {
+    color: Colors.white,
+  },
+  viewsText: {
+    color: Colors.white,
+    fontSize: 12,
+    fontWeight: '700',
+  },
+  switchBtn: {
+    position: 'absolute',
+    right: 10,
+    bottom: 0,
+  },
+  listContentContainer: {
+    alignItems: 'center',
+    paddingBottom: 20,
+    backgroundColor: '#181d25',
   },
 });
