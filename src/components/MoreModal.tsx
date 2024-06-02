@@ -6,6 +6,8 @@ import {
   useWindowDimensions,
   Image,
   ImageBackground,
+  Pressable,
+  ScrollView,
 } from 'react-native';
 import Modal from 'react-native-modal';
 import Colors from '../constants/Colors';
@@ -52,6 +54,7 @@ export default function MoreModal({
   ];
   return (
     <Modal
+      propagateSwipe={true}
       isVisible={isVisible}
       onBackdropPress={onClose}
       onSwipeComplete={onClose}
@@ -64,26 +67,36 @@ export default function MoreModal({
         style={styles.linearGradient}
       />
       <View style={[styles.modalContent, {maxHeight: height * 0.8}]}>
-        <Text style={styles.title}>{title}</Text>
-        <Text style={styles.episode}>{episode}</Text>
-        <Text style={styles.description}>{description}</Text>
-        <View style={styles.seprator} />
-        <View>
-          {iconsData.map(icon => {
-            return (
-              <View style={styles.iconsContainer} key={icon.id}>
-                <View style={styles.iconAndTextContainer}>
-                  <ImageBackground
-                    style={styles.backgroundImage}
-                    source={require('../assets/modalIcon.png')}>
-                    <Image style={styles.imageIcon} source={icon.imageSource} />
-                  </ImageBackground>
-                </View>
-                <Text style={styles.iconText}>{icon.text}</Text>
-              </View>
-            );
-          })}
+        <View style={styles.shadowView}>
+          <Text style={styles.title}>{title}</Text>
+          <Text style={styles.episode}>{episode}</Text>
         </View>
+
+        <ScrollView showsVerticalScrollIndicator={false}>
+          <Pressable>
+            <Text style={styles.description}>{description}</Text>
+            <View style={styles.seprator} />
+            <View>
+              {iconsData.map(icon => {
+                return (
+                  <View style={styles.iconsContainer} key={icon.id}>
+                    <View style={styles.iconAndTextContainer}>
+                      <ImageBackground
+                        style={styles.backgroundImage}
+                        source={require('../assets/modalIcon.png')}>
+                        <Image
+                          style={styles.imageIcon}
+                          source={icon.imageSource}
+                        />
+                      </ImageBackground>
+                    </View>
+                    <Text style={styles.iconText}>{icon.text}</Text>
+                  </View>
+                );
+              })}
+            </View>
+          </Pressable>
+        </ScrollView>
       </View>
     </Modal>
   );
@@ -95,8 +108,10 @@ const styles = StyleSheet.create({
     margin: 0,
   },
   modalContent: {
+    flex: 1,
     backgroundColor: Colors.primaryBackground,
-    padding: 20,
+    // padding: 20,
+    paddingHorizontal: 0,
   },
   linearGradient: {
     height: 1,
@@ -106,16 +121,29 @@ const styles = StyleSheet.create({
     color: Colors.white,
     fontWeight: 'bold',
     paddingTop: 10,
+    paddingHorizontal: 20,
   },
   episode: {
     fontSize: 16,
     color: Colors.white,
     paddingVertical: 10,
+    paddingHorizontal: 20,
+  },
+  shadowView: {
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 1,
+    },
+    shadowOpacity: 0.18,
+    shadowRadius: 1.0,
+    backgroundColor: Colors.primaryBackground,
   },
   description: {
     color: Colors.textOffWhite,
     fontSize: 16,
-    paddingBottom: 20,
+    paddingVertical: 10,
+    paddingHorizontal: 20,
   },
   seprator: {
     borderBottomWidth: 1,
@@ -125,6 +153,7 @@ const styles = StyleSheet.create({
     paddingTop: 10,
     flexDirection: 'row',
     alignItems: 'center',
+    paddingHorizontal: 20,
   },
   imageIcon: {
     height: 20,

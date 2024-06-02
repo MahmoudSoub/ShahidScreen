@@ -25,15 +25,16 @@ function Feed() {
       <View style={styles.innerContainer}>
         <HomeHeader />
         <FlatList
+          keyboardShouldPersistTaps="handled"
+          data={posts}
+          keyExtractor={({id}) => id.toString()}
+          renderItem={renderListItem}
           viewabilityConfig={{
             itemVisiblePercentThreshold: 50,
           }}
           onViewableItemsChanged={onViewableItemsChanged}
           showsVerticalScrollIndicator={false}
           pagingEnabled
-          keyExtractor={({id}) => id.toString()}
-          data={posts}
-          renderItem={renderListItem}
         />
       </View>
     </View>
