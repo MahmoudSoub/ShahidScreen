@@ -10,6 +10,8 @@ import {
   ImageRequireSource,
   ListRenderItem,
   FlatList,
+  ScrollView,
+  Keyboard,
 } from 'react-native';
 import Modal from 'react-native-modal';
 import Colors from '../constants/Colors';
@@ -106,6 +108,7 @@ export default function CommentsModal({
       }, 100);
     }
     setNewComment('');
+    Keyboard.dismiss();
   };
 
   const handleRenderItem: ListRenderItem<Comment> = useCallback(({item}) => {
@@ -120,6 +123,13 @@ export default function CommentsModal({
       </Pressable>
     );
   }, []);
+
+  const handleOnChangeText = (text: string) => {
+    setNewComment(text);
+    if (text.length === 0) {
+      setReplyToCommentId(null);
+    }
+  };
 
   return (
     <Modal
@@ -144,9 +154,10 @@ export default function CommentsModal({
           </View>
         </View>
         <FlatList
+          keyboardShouldPersistTaps="handled"
           ref={flatlistRef}
           showsVerticalScrollIndicator={false}
-          contentContainerStyle={{padding: 20}}
+          contentContainerStyle={{paddingTop: 20, paddingHorizontal: 20}}
           data={comments}
           keyExtractor={item => item.id}
           renderItem={handleRenderItem}
@@ -154,14 +165,10 @@ export default function CommentsModal({
         <View style={styles.footer}>
           <View style={styles.textInputContainer}>
             <TextInput
+              keyboardType="twitter"
               ref={inputRef}
               value={newComment}
-              onChangeText={text => {
-                setNewComment(text);
-                if (text.length === 0) {
-                  setReplyToCommentId(null);
-                }
-              }}
+              onChangeText={text => handleOnChangeText(text)}
               placeholder={
                 replyToCommentId ? 'Type a reply...' : 'Type a message...'
               }

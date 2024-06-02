@@ -1,5 +1,5 @@
 import {Image, Pressable, StyleSheet, Text, View} from 'react-native';
-import React, {Dispatch, SetStateAction, useEffect, useState} from 'react';
+import React from 'react';
 import {Comment, Replies} from './CommentsModal';
 import Colors from '../constants/Colors';
 
