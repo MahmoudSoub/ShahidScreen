@@ -15,7 +15,6 @@ import createImageInfo from '../assets/home-mock-data';
 import type {PostType} from '../assets/posts-mock-data';
 import Animated, {
   Easing,
-  useAnimatedStyle,
   useSharedValue,
   withTiming,
 } from 'react-native-reanimated';
@@ -34,10 +33,10 @@ interface PostProps {
 export default function Post({item, activePostId}: PostProps) {
   const [isMoreModalVisible, setMoreModalVisible] = useState(false);
   const [isCommentsModalVisible, setIsCommentsModalVisible] = useState(false);
+  const [commentsLength, setCommentsLength] = useState<number | null>(null);
 
   const [isLiked, setIsLiked] = useState(false);
   const [isShowMore, setIsShowMore] = useState(false);
-  const [contentHeight, setContentHeight] = useState(0);
   const [ended, setEnded] = useState(false);
   const [currentTime, setCurrentTime] = useState<number>();
   const [duration, setDuration] = useState<number>();
@@ -47,8 +46,15 @@ export default function Post({item, activePostId}: PostProps) {
   const [paused, setPaused] = useState(true);
   const videoRef = useRef<VideoRef>(null);
 
+  useEffect(() => {
+    if (videoRef.current) {
+      setPaused(activePostId !== item.id);
+    }
+  }, [activePostId, videoRef.current]);
+
   const {height, width} = useWindowDimensions();
-  const maxHeroHeight = height - (64 + 60 + 40 + 60 + 10); // right below the header
+  const logoImageHeight = 60;
+  const maxHeroHeight = height - (64 + logoImageHeight + 40 + 60 + 40); // right below the header (header's height = 64)
 
   const handleVideoEnded = () => {
     setEnded(true);
@@ -63,41 +69,19 @@ export default function Post({item, activePostId}: PostProps) {
 
   const onContainerPress = () => {
     if (!isShowMore) {
-      setPaused(false);
-      if (!paused) {
-        setPaused(true);
-      }
+      setPaused(!paused);
     } else {
       toggleShowMore();
     }
   };
 
-  useEffect(() => {
-    if (videoRef.current) {
-      setPaused(activePostId !== item.id);
-    }
-  }, [activePostId, videoRef.current]);
-
   const toggleShowMore = () => {
     setIsShowMore(!isShowMore);
   };
-  const descriptionTextHeight = item.description ? 42 : 0;
 
   const animatedOpacity = useSharedValue(0);
 
-  const animatedStyle = useAnimatedStyle(() => {
-    const height = isShowMore
-      ? Math.min(contentHeight, maxHeroHeight)
-      : descriptionTextHeight;
-    return {
-      height: withTiming(height, {
-        duration: 200,
-        easing: Easing.inOut(Easing.ease),
-      }),
-    };
-  });
-
-  const handleAnimation = () => {
+  const handleOpacityAnimation = () => {
     animatedOpacity.value = withTiming(isShowMore ? 0.8 : 0, {
       duration: 200,
       easing: Easing.inOut(Easing.ease),
@@ -128,6 +112,7 @@ export default function Post({item, activePostId}: PostProps) {
     setIsLiked,
     setMoreModalVisible,
     setIsCommentsModalVisible,
+    commentsLength,
   );
 
   const toggleMoreModal = () => {
@@ -178,22 +163,20 @@ export default function Post({item, activePostId}: PostProps) {
         style={[styles.heroContainer, {display: isSeeking ? 'none' : 'flex'}]}>
         <View style={styles.heroAndIconsContainer}>
           <View style={styles.imageAndText}>
-            <Image source={item.logoSource} style={styles.logoImage} />
-            <View style={styles.titleContainer}>
+            <Image
+              source={item.logoSource}
+              style={[styles.logoImage, {height: logoImageHeight}]}
+            />
+            <View>
               <Text style={styles.title}>{item.title}</Text>
             </View>
-            <Animated.View style={[styles.descriptionContainer, animatedStyle]}>
-              <DescriptionView
-                contentHeight={contentHeight}
-                isShowMore={isShowMore}
-                item={item}
-                maxHeroHeight={maxHeroHeight}
-                setContentHeight={setContentHeight}
-                descriptionTextHeight={descriptionTextHeight}
-                toggleShowMore={toggleShowMore}
-                handleAnimation={handleAnimation}
-              />
-            </Animated.View>
+            <DescriptionView
+              isShowMore={isShowMore}
+              item={item}
+              toggleShowMore={toggleShowMore}
+              handleOpacityAnimation={handleOpacityAnimation}
+              maxHeroHeight={maxHeroHeight}
+            />
           </View>
           <View style={styles.icons}>
             {imageInfo.map(({id, source, text, onPress, tintColor}) => (
@@ -215,9 +198,7 @@ export default function Post({item, activePostId}: PostProps) {
             onClose={toggleMoreModal}
           />
           <CommentsModal
-            title={item.title}
-            episode={item.episode}
-            description={item.description}
+            onCommentLengthChange={length => setCommentsLength(length)}
             isVisible={isCommentsModalVisible}
             onClose={toggleCommentsModal}
           />
@@ -279,7 +260,6 @@ const styles = StyleSheet.create({
 
   logoImage: {
     width: 100,
-    height: 60,
   },
   heroContainer: {
     zIndex: 999,
@@ -299,15 +279,10 @@ const styles = StyleSheet.create({
     fontWeight: '500',
     color: 'white',
   },
-  titleContainer: {},
   title: {
     fontSize: 18,
     color: 'white',
     fontWeight: '800',
-  },
-  descriptionContainer: {
-    maxWidth: 300,
-    // overflow: 'hidden',
   },
 
   imageAndText: {

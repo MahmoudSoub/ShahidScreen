@@ -1,77 +1,97 @@
 import {
-  LayoutChangeEvent,
   Pressable,
   StyleSheet,
   Text,
   ScrollView,
+  View,
+  LayoutChangeEvent,
 } from 'react-native';
-import React, {useEffect} from 'react';
-import {useSharedValue} from 'react-native-reanimated';
+import React, {useEffect, useState} from 'react';
 import {PostType} from '../assets/posts-mock-data';
+import Animated, {
+  Easing,
+  useAnimatedRef,
+  useAnimatedStyle,
+  useSharedValue,
+  withTiming,
+} from 'react-native-reanimated';
 
 interface DescriptionViewProps {
   item: PostType;
   isShowMore: boolean;
   toggleShowMore: () => void;
+  handleOpacityAnimation: () => void;
   maxHeroHeight: number;
-  descriptionTextHeight: number;
-  contentHeight: number;
-  setContentHeight: (height: number) => void;
-  handleAnimation: () => void;
 }
 
 const DescriptionView = ({
   item,
   isShowMore,
   toggleShowMore,
+  handleOpacityAnimation,
   maxHeroHeight,
-  descriptionTextHeight,
-  contentHeight,
-  setContentHeight,
-  handleAnimation,
 }: DescriptionViewProps) => {
-  const onTextLayout = (event: LayoutChangeEvent) => {
-    setContentHeight(event.nativeEvent.layout.height);
+  const [textHeight, setTextHeight] = useState<number>(0);
+  const animatedHeight = useSharedValue(0);
+
+  const animatedStyle = useAnimatedStyle(() => {
+    const height = isShowMore
+      ? Math.min(textHeight, maxHeroHeight)
+      : textHeight;
+    return {
+      height: withTiming(height, {
+        duration: 300,
+        easing: Easing.inOut(Easing.ease),
+      }),
+    };
+  });
+
+  const handleHeightAnimation = () => {
+    animatedHeight.value = withTiming(isShowMore ? maxHeroHeight : textHeight, {
+      duration: 200,
+      easing: Easing.inOut(Easing.ease),
+    });
   };
 
-  const animatedDescriptionHeight = useSharedValue(descriptionTextHeight);
+  const handleOnLayout = (e: LayoutChangeEvent) => {
+    const {height} = e.nativeEvent.layout;
+    setTextHeight(height);
+  };
 
   useEffect(() => {
-    animatedDescriptionHeight.value = isShowMore
-      ? Math.min(contentHeight, maxHeroHeight)
-      : descriptionTextHeight;
-    handleAnimation();
-  }, [isShowMore, contentHeight]);
+    handleOpacityAnimation();
+    handleHeightAnimation();
+  }, [isShowMore]);
 
   if (!item.description) {
     return null;
   }
-  if (item.description.length >= 120) {
-    return (
+  return (
+    <Animated.View style={[styles.descriptionContainer, animatedStyle]}>
       <ScrollView showsVerticalScrollIndicator={false}>
         <Pressable onPress={toggleShowMore}>
-          <Text
-            style={styles.description}
-            onLayout={isShowMore ? onTextLayout : undefined}>
+          <Text style={styles.description} onLayout={e => handleOnLayout(e)}>
             {isShowMore
-              ? item.description
-              : `${item.description.slice(0, 121)}...`}
+              ? `${item.description}.. `
+              : `${item.description.slice(0, 80)}... `}
             <Text style={styles.showText}>
-              {isShowMore ? ' Show Less' : ' Show More'}
+              {isShowMore ? 'Show Less' : 'Show More'}
             </Text>
           </Text>
         </Pressable>
       </ScrollView>
-    );
-  } else {
-    return <Text style={styles.description}>{item.description}</Text>;
-  }
+    </Animated.View>
+  );
 };
 
 export default DescriptionView;
 
 const styles = StyleSheet.create({
+  descriptionContainer: {
+    maxWidth: 300,
+  },
   description: {
+    flex: 1,
     color: '#f0f0f0',
     fontSize: 12,
   },
